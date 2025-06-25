@@ -12,6 +12,11 @@
 #define SNAKE_MAX_LEN 256
 #define INPUT_QUEUE_SIZE 2
 
+struct GridPosition
+{
+    int x;
+    int y;
+};
 
 enum Direction
 {
@@ -32,12 +37,12 @@ struct DirectionQueue
 
 struct Food
 {
-    Vector2 position;
+    GridPosition position;
 };
 
 struct SnakePart
 {
-    Vector2 position;
+    GridPosition position;
 };
 
 struct Snake

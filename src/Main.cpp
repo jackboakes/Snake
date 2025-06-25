@@ -21,6 +21,8 @@ int main()
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
     GameState gameState;
     InitGame(&gameState);
+
+    LoadSnakeTextures(); //snake head atlas
     SetTargetFPS(60); 
 
 
@@ -42,11 +44,14 @@ int main()
         ClearBackground(backgroundColor);
 
         DrawGameBoard();
-        DrawUI(&gameState);
-        DrawSnake(&gameState);
-        DrawFood(&gameState);
+        DrawUI(gameState.score, gameState.highScore);
+        DrawSnake(gameState.snake);
+        DrawFood(gameState.food);
+
+
         int fps = GetFPS();
         const char* windowTitle = TextFormat("Snake! FPS: %i", fps);
+
         EndDrawing();
         SetWindowTitle(windowTitle);
     }
@@ -55,6 +60,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
+    UnloadSnakeTextures();
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
