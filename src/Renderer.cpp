@@ -10,7 +10,7 @@ static Texture2D snakeAtlas = { 0 };
 
 void LoadSnakeTextures()
 {
-    snakeAtlas = LoadTexture("..\\..\\assets\\snake_heads.png");
+    snakeAtlas = LoadTexture("..\\..\\assets\\snake_atlas.png");
 
     if (snakeAtlas.id > 0)
     {
@@ -109,12 +109,7 @@ void DrawSnake(const Snake& snake)
         Rectangle sourceRect = GetHeadSpriteRect(snake.currentDirection);
 
         // Destination rectangle (where to draw on screen)
-        Rectangle destRect = {
-            headX,
-            headY,
-            TILE_SIZE,
-            TILE_SIZE
-        };
+        Rectangle destRect = {headX, headY, TILE_SIZE, TILE_SIZE};
 
         // Draw the sprite (no rotation needed since we have pre-rotated sprites)
         DrawTexturePro(snakeAtlas, sourceRect, destRect, { 0, 0 }, 0.0f, WHITE);
@@ -132,5 +127,17 @@ void DrawFood(const Food& food)
     int pixelX = GAME_OFFSET + (int)(food.position.x * TILE_SIZE);
     int pixelY = GAME_OFFSET + (int)(food.position.y * TILE_SIZE);
 
-    DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, GREEN);
+
+    if (snakeAtlas.id > 0)
+    {
+        Rectangle foodRect = { 0, 2 * TILE_SIZE, TILE_SIZE,TILE_SIZE };
+
+        Rectangle destRect = {pixelX, pixelY, TILE_SIZE, TILE_SIZE};
+
+        DrawTexturePro(snakeAtlas, foodRect, destRect, { 0, 0 }, 0.0f, WHITE);
+    }
+    else
+    {
+        DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, GREEN);
+    }
 }
