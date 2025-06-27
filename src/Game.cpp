@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Input.h"
 #include "Score.h"
+#include "Types.h"
 
 
 void InitDirectionQueue(DirectionQueue* queue)
@@ -61,16 +62,16 @@ Direction GetNextDirection(DirectionQueue* queue)
     return queue->dirValues[queue->head];
 }
 
-Vector2 DirectionToVector(Direction dir)
+GridPosition DirectionToGridOffset(Direction dir)
 {
     switch (dir)
     {
         Vector2 direction;
-        case DIR_NORTH: return direction = { 0, -1 };
-        case DIR_SOUTH: return direction = { 0, 1 };
-        case DIR_EAST: return direction = { 1, 0 };
-        case DIR_WEST: return direction = { -1, 0 };
-        default: return direction = { 0, 0 };
+    case DIR_NORTH: return { 0, -1 };
+    case DIR_SOUTH: return { 0, 1 };
+    case DIR_EAST:  return { 1, 0 };
+    case DIR_WEST:  return { -1, 0 };
+    default:        return { 0, 0 };
     }
 }
 
@@ -149,9 +150,9 @@ void UpdateSnake(Snake* snake, float deltaTime)
             snake->bodyPart[i] = snake->bodyPart[i - 1];
         }
 
-        Vector2 directionVector = DirectionToVector(snake->currentDirection);
-        snake->bodyPart[0].position.x += directionVector.x;
-        snake->bodyPart[0].position.y += directionVector.y;
+        GridPosition dirOnGrid = DirectionToGridOffset(snake->currentDirection);
+        snake->bodyPart[0].position.x += dirOnGrid.x;
+        snake->bodyPart[0].position.y += dirOnGrid.y;
     }
 }
 
@@ -193,14 +194,14 @@ void GameLogic(GameState* gameState)
     if (gameState->food.position.x == gameState->snake.bodyPart[0].position.x &&
         gameState->food.position.y == gameState->snake.bodyPart[0].position.y)
     {
-        Vector2 directionVector = DirectionToVector(gameState->snake.currentDirection);
+        GridPosition dirOnGrid = DirectionToGridOffset(gameState->snake.currentDirection);
 
 
         // initialise position of newly created tail based on direction
         gameState->snake.bodyPart[gameState->snake.length].position.x =
-            gameState->snake.bodyPart[gameState->snake.length - 1].position.x - directionVector.x;
+            gameState->snake.bodyPart[gameState->snake.length - 1].position.x - dirOnGrid.x;
         gameState->snake.bodyPart[gameState->snake.length].position.y =
-            gameState->snake.bodyPart[gameState->snake.length - 1].position.y - directionVector.y;
+            gameState->snake.bodyPart[gameState->snake.length - 1].position.y - dirOnGrid.y;
 
         gameState->snake.length++;
         gameState->score += 5;
@@ -230,7 +231,7 @@ void GameLogic(GameState* gameState)
 
 }
 
-void HandleInput(Snake* snake, InputAction input)
+void HandleInputGame(Snake* snake, InputAction input)
 {
     Direction newDirection = DIR_NONE;
 
@@ -240,7 +241,6 @@ void HandleInput(Snake* snake, InputAction input)
         case INPUT_LEFT: newDirection = DIR_WEST; break;
         case INPUT_DOWN: newDirection = DIR_SOUTH; break;
         case INPUT_RIGHT: newDirection = DIR_EAST; break;
-        //case INPUT_QUIT: ; break;
         case INPUT_NONE: return;
     }
 

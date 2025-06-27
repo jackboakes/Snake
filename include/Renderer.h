@@ -2,6 +2,14 @@
 #define RENDERER_H
 
 #include "Game.h"
+#include "GameManager.h"
+
+// Menu global constants
+#define TITLE_FONT_SIZE 40
+#define OPTION_FRONT_SIZE 30
+#define INSTRUCTION_FONT_SIZE 20
+#define VERTICAL_SPACING 50
+#define TITLE_Y 200
 
 extern Color const snakeColour;
 
@@ -16,9 +24,12 @@ void UnloadSnakeTextures();
 
 
 void DrawGameBoard();
-void DrawUI(int score, int highScore);
+void DrawGameUI(int score, int highScore);
 Rectangle GetHeadSpriteRect(Direction direction);
 void DrawSnake(const Snake& snake);
 void DrawFood(const Food& food);
+void DrawGamePlay(GameManager* gameManager);
+void DrawMainMenu(int selectedOption);
+void DrawGameOverMenu(int selectedOption, int score, int highScore);
 
 #endif

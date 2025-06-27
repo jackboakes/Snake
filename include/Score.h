@@ -1,7 +1,7 @@
 #ifndef SCORE_H
 #define SCORE_H
 
-#define STORAGE_DATA_FILE "highscore.txt"
+#define HIGHSCORE_FILE "highscore.txt"
 
 
 int LoadHighScore(void);

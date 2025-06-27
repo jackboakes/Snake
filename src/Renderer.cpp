@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include "Renderer.h"
 #include "Game.h"
+#include "Types.h"
 
 // snake colour CA0004
 Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };
@@ -55,7 +56,7 @@ void DrawGameBoard()
     DrawRectangleLinesEx(borderRect, borderThickness, borderColor);
 }
 
-void DrawUI(int score, int highScore)
+void DrawGameUI(int score, int highScore)
 {
     const int fontSize = 40;
     const int yPosition = 20;
@@ -69,7 +70,7 @@ void DrawUI(int score, int highScore)
     int rightAlignedX = rightEdge - highScoreTextWidth;
 
     DrawText(currentScoreText, leftEdge, yPosition, fontSize, RAYWHITE);
-    DrawText(highScoreText, rightAlignedX, yPosition, fontSize, RAYWHITE);
+    DrawText(highScoreText, rightAlignedX, yPosition, fontSize, YELLOW);
 }
 
 Rectangle GetHeadSpriteRect(Direction direction)
@@ -140,4 +141,103 @@ void DrawFood(const Food& food)
     {
         DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, GREEN);
     }
+}
+
+void DrawGamePlay(GameManager* gameManager)
+{
+    BeginDrawing();
+
+    Color backgroundColor = { 0x2D, 0x27, 0x2F, 0xFF }; // Dark purple background
+    ClearBackground(backgroundColor);
+
+    DrawGameBoard();
+    DrawGameUI(gameManager->gameState.score, gameManager->gameState.highScore);
+    DrawSnake(gameManager->gameState.snake);
+    DrawFood(gameManager->gameState.food);
+
+    EndDrawing();
+}
+
+void DrawMainMenu(int selectedOption)
+{
+    const char* title = "SNAKE GAME";
+    const char* options[] = { "Start Game", "Exit" };
+    const int optionCount = sizeof(options) / sizeof(options[0]);
+
+    // Calculate positions
+    int titleWidth = MeasureText(title, TITLE_FONT_SIZE);
+    int titleX = (GetScreenWidth() - titleWidth) / 2;
+
+    DrawText(title, titleX, TITLE_Y, TITLE_FONT_SIZE, RAYWHITE);
+
+    for (int i = 0; i < optionCount; i++)
+    {
+        int optionWidth = MeasureText(options[i], OPTION_FRONT_SIZE);
+        int optionX = (GetScreenWidth() - optionWidth) / 2;
+        int optionY = TITLE_Y + VERTICAL_SPACING + (i * VERTICAL_SPACING);
+
+        Color color;
+        if (i == selectedOption) {
+            color = YELLOW;
+        }
+        else {
+            color = RAYWHITE;
+        }
+        DrawText(options[i], optionX, optionY, OPTION_FRONT_SIZE, color);
+    }
+
+    // Draw instructions
+    const char* instructions = "Use UP/DOWN to navigate, ENTER to select";
+    int instrWidth = MeasureText(instructions, INSTRUCTION_FONT_SIZE);
+    int instrX = (GetScreenWidth() - instrWidth) / 2;
+    DrawText(instructions, instrX, TITLE_Y + VERTICAL_SPACING * 3, INSTRUCTION_FONT_SIZE, GRAY);
+}
+
+void DrawGameOverMenu(int selectedOption, int score, int highScore)
+{
+    const int scoreFontSize = 25;
+
+    const char* title = "GAME OVER";
+    const char* options[] = { "Main Menu", "Restart", "Quit" };
+    const int optionCount = sizeof(options) / sizeof(options[0]);
+
+    // Calculate positions
+    int titleWidth = MeasureText(title, TITLE_FONT_SIZE);
+    int titleX = (GetScreenWidth() - titleWidth) / 2;
+
+    // Draw title
+    DrawText(title, titleX, TITLE_Y, TITLE_FONT_SIZE, RED);
+
+    // Draw scores
+    const char* scoreText = TextFormat("Final Score: %d", score);
+    const char* highScoreText = TextFormat("High Score: %d", highScore);
+
+    int scoreWidth = MeasureText(scoreText, scoreFontSize);
+    int highScoreWidth = MeasureText(highScoreText, scoreFontSize);
+
+    DrawText(scoreText, (GetScreenWidth() - scoreWidth) / 2, TITLE_Y + 50, scoreFontSize, RAYWHITE);
+    DrawText(highScoreText, (GetScreenWidth() - highScoreWidth) / 2, TITLE_Y + 80, scoreFontSize, YELLOW);
+
+    // Draw menu options
+    for (int i = 0; i < optionCount; i++)
+    {
+        int optionWidth = MeasureText(options[i], OPTION_FRONT_SIZE);
+        int optionX = (GetScreenWidth() - optionWidth) / 2;
+        int optionY = TITLE_Y + 150 + (i * VERTICAL_SPACING);
+
+        Color color;
+        if (i == selectedOption) {
+            color = YELLOW;
+        }
+        else {
+            color = RAYWHITE;
+        }
+        DrawText(options[i], optionX, optionY, OPTION_FRONT_SIZE, color);
+    }
+
+    // Draw instructions
+    const char* instructions = "Use UP/DOWN to navigate, ENTER to select";
+    int instrWidth = MeasureText(instructions, INSTRUCTION_FONT_SIZE);
+    int instrX = (GetScreenWidth() - instrWidth) / 2;
+    DrawText(instructions, instrX, TITLE_Y + 150 + (optionCount * VERTICAL_SPACING), INSTRUCTION_FONT_SIZE, GRAY);
 }

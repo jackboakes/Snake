@@ -3,7 +3,7 @@
 #include <stdio.h> // sprintf
 #include <string> // std::stoi
 
-#define HIGHSCORE_FILE "highscore.txt"
+
 
 int LoadHighScore(void)
 {

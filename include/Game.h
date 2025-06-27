@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "Input.h"
+#include "Types.h"
 
 #define TILE_SIZE 32
 #define GRID_SIZE 20
@@ -12,19 +13,11 @@
 #define SNAKE_MAX_LEN 256
 #define INPUT_QUEUE_SIZE 2
 
+// Allows refering to grid position instead of screen space
 struct GridPosition
 {
     int x;
     int y;
-};
-
-enum Direction
-{
-    DIR_NONE = 0,
-    DIR_NORTH,
-    DIR_WEST,
-    DIR_SOUTH,
-    DIR_EAST
 };
 
 struct DirectionQueue
@@ -71,7 +64,7 @@ bool DirectionQueueFull(DirectionQueue* queue);
 bool EnqueueDirection(DirectionQueue* queue, Direction dir);
 Direction DequeueDirection(DirectionQueue* queue);
 Direction GetNextDirection(DirectionQueue* queue);
-Vector2 DirectionToVector(Direction dir);
+GridPosition DirectionToGridOffset(Direction dir);
 bool IsOppositeDirection(Direction dir1, Direction dir2);
 
 void InitGame(GameState* gameState);
@@ -80,6 +73,6 @@ void InitSnake(Snake* snake);
 void UpdateSnake(Snake* snake, float deltaTime);
 void UpdateFood(GameState* gameState);
 void GameLogic(GameState* gameState);
-void HandleInput(Snake* snake, InputAction input);
+void HandleInputGame(Snake* snake, InputAction input);
 
 #endif
