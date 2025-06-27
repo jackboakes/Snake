@@ -11,7 +11,12 @@ static Texture2D snakeAtlas = { 0 };
 
 void LoadSnakeTextures()
 {
-    snakeAtlas = LoadTexture("..\\..\\assets\\snake_atlas.png");
+    snakeAtlas = LoadTexture("assets/snake_atlas.png"); // when run with cmake in root dir
+
+    if (snakeAtlas.id == 0) {
+        // Fallback to build directory (when run by clicking exe)
+        snakeAtlas = LoadTexture("../../assets/snake_atlas.png");
+    }
 
     if (snakeAtlas.id > 0)
     {
