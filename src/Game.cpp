@@ -190,10 +190,17 @@ void UpdateFood(GameState* gameState)
 
 void GameLogic(GameState* gameState)
 {
+    
+
     // when eat food grow snake
     if (gameState->food.position.x == gameState->snake.bodyPart[0].position.x &&
         gameState->food.position.y == gameState->snake.bodyPart[0].position.y)
     {
+        float pitch = GetRandomValue(95, 105) / 100.0f;
+        SetSoundPitch(gameState->eatSound, pitch);
+        PlaySound(gameState->eatSound);
+
+
         GridPosition dirOnGrid = DirectionToGridOffset(gameState->snake.currentDirection);
 
 
@@ -212,6 +219,7 @@ void GameLogic(GameState* gameState)
     if (gameState->snake.bodyPart[0].position.x == 0 || gameState->snake.bodyPart[0].position.x == GRID_SIZE - 1
         || gameState->snake.bodyPart[0].position.y == 0 || gameState->snake.bodyPart[0].position.y == GRID_SIZE - 1)
     {
+        PlaySound(gameState->collisionSound);
         CheckAndUpdateHighScore(gameState->score, &gameState->highScore);
         gameState->isGameOver = 1;
         return;
@@ -223,6 +231,7 @@ void GameLogic(GameState* gameState)
         if (gameState->snake.bodyPart[0].position.x == gameState->snake.bodyPart[i].position.x &&
             gameState->snake.bodyPart[0].position.y == gameState->snake.bodyPart[i].position.y)
         {
+            PlaySound(gameState->collisionSound);
             CheckAndUpdateHighScore(gameState->score, &gameState->highScore);
             gameState->isGameOver = 1;
             return;

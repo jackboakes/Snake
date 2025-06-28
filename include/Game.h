@@ -56,6 +56,9 @@ struct GameState
     int isGameOver;
     int score;
     int highScore;
+
+    Sound eatSound;
+    Sound collisionSound;
 };
 
 void InitDirectionQueue(DirectionQueue* queue);

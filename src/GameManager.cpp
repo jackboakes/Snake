@@ -14,6 +14,11 @@ void InitGameManager(GameManager* gameManager)
     gameManager->nextStateID = STATE_MAIN_MENU;
     gameManager->selectedMenuOption = 0;
 
+    InitAudioDevice();
+
+    gameManager->gameState.eatSound = LoadSound("assets/sfx_snake_eat.wav");
+    gameManager->gameState.collisionSound = LoadSound("assets/sfx_snake_collision.wav");
+
     // Initialize game resources
     InitGame(&gameManager->gameState);
     LoadSnakeTextures();
@@ -75,7 +80,10 @@ void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
 
 void ShutdownGameManager(GameManager* gameManager)
 {
+    UnloadSound(gameManager->gameState.collisionSound);
+    UnloadSound(gameManager->gameState.eatSound);
     UnloadSnakeTextures();
+    CloseAudioDevice();
     CloseWindow();
 }
 
