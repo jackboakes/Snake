@@ -14,7 +14,7 @@ enum InputAction
 };
 
 
-InputAction ReadInputMenu();
-InputAction ReadInputGame();
+InputAction ReadMenuInput();
+InputAction ReadGameInput();
 
 #endif

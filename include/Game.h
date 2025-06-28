@@ -12,6 +12,9 @@
 
 #define SNAKE_MAX_LEN 256
 #define INPUT_QUEUE_SIZE 2
+#define SCORE_INCREMENT 5
+
+struct GameManager;
 
 // Allows refering to grid position instead of screen space
 struct GridPosition
@@ -57,9 +60,11 @@ struct GameState
     int score;
     int highScore;
 
+    // Audio resources | needs to be vector to be scaleable
     Sound eatSound;
     Sound collisionSound;
 };
+
 
 void InitDirectionQueue(DirectionQueue* queue);
 bool DirectionQueueEmpty(DirectionQueue* queue);
@@ -67,15 +72,29 @@ bool DirectionQueueFull(DirectionQueue* queue);
 bool EnqueueDirection(DirectionQueue* queue, Direction dir);
 Direction DequeueDirection(DirectionQueue* queue);
 Direction GetNextDirection(DirectionQueue* queue);
+
+// Helper functions
 GridPosition DirectionToGridOffset(Direction dir);
 bool IsOppositeDirection(Direction dir1, Direction dir2);
 
+// Game logic functions
 void InitGame(GameState* gameState);
 void UpdateGame(GameState* gameState, float deltaTime);
+void GameLogic(GameState* gameState);
+void HandleGameOver(GameState* gameState);
+
+// Snake functions
 void InitSnake(Snake* snake);
 void UpdateSnake(Snake* snake, float deltaTime);
+void HandleSnakeInput(Snake* snake, InputAction input);
+bool CheckWallCollison(const Snake* snake);
+bool CheckSelfCollision(const Snake* snake);
+
+// Food functions
 void UpdateFood(GameState* gameState);
-void GameLogic(GameState* gameState);
-void HandleInputGame(Snake* snake, InputAction input);
+bool CheckFoodCollision(const Snake* snake, const Food* food);
+void HandleFoodCollision(GameState* gameState);
+
+
 
 #endif

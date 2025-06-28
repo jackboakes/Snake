@@ -33,6 +33,7 @@ set(SOURCES
     src/Renderer.cpp
     src/Input.cpp
     src/Score.cpp
+    src/Audio.cpp
 )
 
 # Our Project

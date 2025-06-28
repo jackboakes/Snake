@@ -3,31 +3,35 @@
 
 #include <raylib.h>
 #include "Types.h"
-#include "Game.h"
 #include "Input.h"
+#include "Game.h"
+#include "Renderer.h"
 #include "Score.h" 
 
-//struct GameState;
 
-// Main controller struct
+// Used to control states
 struct GameManager
 {
-    GameStateID currentStateID;
-    GameStateID nextStateID;
-    GameState gameState;
-
+    GameStateID currentState;
+    GameStateID nextState;
     bool shouldQuit;
     int selectedMenuOption;
+
+    // Game Data
+    GameState gameState;
 };
 
-void InitGameManager(GameManager* gameManager);
-void RunGameManager(GameManager* gameManager);
-void SetGameManagerState(GameManager* gameManager, GameStateID newStateID);
-void ShutdownGameManager(GameManager* gameManager);
 
-// State functions
-void StateMainMenu(GameManager* gameManager);
-void StateGameplay(GameManager* gameManager);
-void StateGameOver(GameManager* gameManager);
+void InitGameManager(GameManager* gameManager);
+void ShutdownGameManager(GameManager* gameManager);
+void RunGameManager(GameManager* gameManager);
+
+// State management
+void SetGameManagerState(GameManager* gameManager, GameStateID newStateID);
+
+// State update functions - each is a complete input, update, render cycle
+void UpdateMainMenu(GameManager* gameManager);
+void UpdateGameplay(GameManager* gameManager);
+void UpdateGameOver(GameManager* gameManager);
 
 #endif 

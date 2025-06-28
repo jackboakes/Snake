@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Score.h"
 #include "Types.h"
+#include "Audio.h"
 
 
 void InitDirectionQueue(DirectionQueue* queue)
@@ -66,7 +67,6 @@ GridPosition DirectionToGridOffset(Direction dir)
 {
     switch (dir)
     {
-        Vector2 direction;
     case DIR_NORTH: return { 0, -1 };
     case DIR_SOUTH: return { 0, 1 };
     case DIR_EAST:  return { 1, 0 };
@@ -156,6 +156,55 @@ void UpdateSnake(Snake* snake, float deltaTime)
     }
 }
 
+void HandleSnakeInput(Snake* snake, InputAction input)
+{
+    Direction newDirection = DIR_NONE;
+
+    switch (input)
+    {
+    case INPUT_UP: newDirection = DIR_NORTH; break;
+    case INPUT_LEFT: newDirection = DIR_WEST; break;
+    case INPUT_DOWN: newDirection = DIR_SOUTH; break;
+    case INPUT_RIGHT: newDirection = DIR_EAST; break;
+    case INPUT_NONE: return;
+    }
+
+    Direction checkDirection = snake->currentDirection;
+    if (!DirectionQueueEmpty(&snake->directionQueue))
+    {
+        // If there are queued inputs, check against the last one
+        int lastIndex = (snake->directionQueue.tail - 1 + INPUT_QUEUE_SIZE) % INPUT_QUEUE_SIZE;
+        checkDirection = snake->directionQueue.dirValues[lastIndex];
+    }
+
+    // Only queue the input if it's not opposite to the current/queued direction
+    if (!IsOppositeDirection(newDirection, checkDirection))
+    {
+        EnqueueDirection(&snake->directionQueue, newDirection);
+    }
+}
+
+bool CheckWallCollision(const Snake* snake)
+{
+    const GridPosition head = snake->bodyPart[0].position;
+
+    return (head.x == 0 || head.x == GRID_SIZE - 1 ||
+        head.y == 0 || head.y == GRID_SIZE - 1);
+}
+
+bool CheckSelfCollision(const Snake* snake)
+{
+    const GridPosition head = snake->bodyPart[0].position;
+
+    for (int i = 1; i < snake->length; i++) {
+        if (head.x == snake->bodyPart[i].position.x &&
+            head.y == snake->bodyPart[i].position.y) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void UpdateFood(GameState* gameState)
 {
     int collision = 0;
@@ -164,12 +213,12 @@ void UpdateFood(GameState* gameState)
     {
         Vector2 newFoodPos;
 
-        // raylibs getrandom value
+        // Raylibs getrandom value
         newFoodPos.x = GetRandomValue(1, GRID_SIZE - 2);  
         newFoodPos.y = GetRandomValue(1, GRID_SIZE - 2);
 
         collision = 0;
-        //check for open space to spawn food
+        // Check for open space to spawn food
         for (int i = 0; i < gameState->snake.length; i++)
         {
             if (gameState->snake.bodyPart[i].position.x == newFoodPos.x &&
@@ -188,82 +237,50 @@ void UpdateFood(GameState* gameState)
     } while (collision);
 }
 
-void GameLogic(GameState* gameState)
+bool CheckFoodCollision(const Snake* snake, const Food* food)
 {
-    
+    return (food->position.x == snake->bodyPart[0].position.x &&
+        food->position.y == snake->bodyPart[0].position.y);
+}
 
-    // when eat food grow snake
-    if (gameState->food.position.x == gameState->snake.bodyPart[0].position.x &&
-        gameState->food.position.y == gameState->snake.bodyPart[0].position.y)
+// Checks wether you collide with the food or not and grows the tail
+void HandleFoodCollision(GameState* gameState) {
+    if (CheckFoodCollision(&gameState->snake, &gameState->food)) 
     {
-        float pitch = GetRandomValue(95, 105) / 100.0f;
-        SetSoundPitch(gameState->eatSound, pitch);
-        PlaySound(gameState->eatSound);
+        PlayEatSound(gameState);
 
+        GridPosition dirOffset = DirectionToGridOffset(gameState->snake.currentDirection);
+        int newTailIndex = gameState->snake.length;
 
-        GridPosition dirOnGrid = DirectionToGridOffset(gameState->snake.currentDirection);
-
-
-        // initialise position of newly created tail based on direction
-        gameState->snake.bodyPart[gameState->snake.length].position.x =
-            gameState->snake.bodyPart[gameState->snake.length - 1].position.x - dirOnGrid.x;
-        gameState->snake.bodyPart[gameState->snake.length].position.y =
-            gameState->snake.bodyPart[gameState->snake.length - 1].position.y - dirOnGrid.y;
+        gameState->snake.bodyPart[newTailIndex].position.x =
+            gameState->snake.bodyPart[newTailIndex - 1].position.x - dirOffset.x;
+        gameState->snake.bodyPart[newTailIndex].position.y =
+            gameState->snake.bodyPart[newTailIndex - 1].position.y - dirOffset.y;
 
         gameState->snake.length++;
         gameState->score += 5;
         UpdateFood(gameState);
     }
-
-    // Check wall collision
-    if (gameState->snake.bodyPart[0].position.x == 0 || gameState->snake.bodyPart[0].position.x == GRID_SIZE - 1
-        || gameState->snake.bodyPart[0].position.y == 0 || gameState->snake.bodyPart[0].position.y == GRID_SIZE - 1)
-    {
-        PlaySound(gameState->collisionSound);
-        CheckAndUpdateHighScore(gameState->score, &gameState->highScore);
-        gameState->isGameOver = 1;
-        return;
-    }
-
-    // Check snake collision
-    for (int i = 1; i < gameState->snake.length; i++)
-    {
-        if (gameState->snake.bodyPart[0].position.x == gameState->snake.bodyPart[i].position.x &&
-            gameState->snake.bodyPart[0].position.y == gameState->snake.bodyPart[i].position.y)
-        {
-            PlaySound(gameState->collisionSound);
-            CheckAndUpdateHighScore(gameState->score, &gameState->highScore);
-            gameState->isGameOver = 1;
-            return;
-        }
-    }
-
 }
 
-void HandleInputGame(Snake* snake, InputAction input)
+void HandleGameOver(GameState* gameState)
 {
-    Direction newDirection = DIR_NONE;
-
-    switch (input)
-    {
-        case INPUT_UP: newDirection = DIR_NORTH; break;
-        case INPUT_LEFT: newDirection = DIR_WEST; break;
-        case INPUT_DOWN: newDirection = DIR_SOUTH; break;
-        case INPUT_RIGHT: newDirection = DIR_EAST; break;
-        case INPUT_NONE: return;
-    }
-
-    Direction checkDirection = snake->currentDirection;
-    if (!DirectionQueueEmpty(&snake->directionQueue))
-    {
-        // If there are queued inputs, check against the last one
-        int lastIndex = (snake->directionQueue.tail - 1 + INPUT_QUEUE_SIZE) % INPUT_QUEUE_SIZE;
-        checkDirection = snake->directionQueue.dirValues[lastIndex];
-    }
-
-    // Only queue the input if it's not opposite to the current/queued direction
-    if (!IsOppositeDirection(newDirection, checkDirection))
-    {
-        EnqueueDirection(&snake->directionQueue, newDirection);
-    }
+    PlayCollisionSound(gameState);
+    CheckAndUpdateHighScore(gameState->score, &gameState->highScore);
+    gameState->isGameOver = true;
 }
+
+void GameLogic(GameState* gameState)
+{
+    HandleFoodCollision(gameState);
+
+    if (CheckWallCollision(&gameState->snake) ||
+        CheckSelfCollision(&gameState->snake))
+    {
+        HandleGameOver(gameState);
+    }
+
+
+}
+
+

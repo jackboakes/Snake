@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include "Input.h"
 
-InputAction ReadInputMenu()
+InputAction ReadMenuInput()
 {
 	if (IsKeyPressed(KEY_W))
 	{
@@ -24,7 +24,7 @@ InputAction ReadInputMenu()
 	return INPUT_NONE;
 }
 
-InputAction ReadInputGame()
+InputAction ReadGameInput()
 {
 	if (IsKeyPressed(KEY_W))
 	{

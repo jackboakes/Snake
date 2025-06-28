@@ -1,51 +1,56 @@
 #include <raylib.h>
 #include "GameManager.h"
-#include "Renderer.h"
-#include "Game.h"
-#include "Input.h"
-#include "Score.h"
 #include "Types.h"
+#include "Input.h"
+#include "Game.h"
+#include "Renderer.h"
+#include "Audio.h"
+#include "Score.h" 
+
 
 
 void InitGameManager(GameManager* gameManager)
 {
     gameManager->shouldQuit = false;
-    gameManager->currentStateID = STATE_MAIN_MENU; // Start in playing state for now
-    gameManager->nextStateID = STATE_MAIN_MENU;
+    gameManager->currentState = STATE_MAIN_MENU; 
+    gameManager->nextState = STATE_MAIN_MENU;
     gameManager->selectedMenuOption = 0;
 
-    InitAudioDevice();
+    InitAudio(&gameManager->gameState);
+    LoadGameTextures();
 
-    gameManager->gameState.eatSound = LoadSound("assets/sfx_snake_eat.wav");
-    gameManager->gameState.collisionSound = LoadSound("assets/sfx_snake_collision.wav");
-
-    // Initialize game resources
     InitGame(&gameManager->gameState);
-    LoadSnakeTextures();
+}
+
+void ShutdownGameManager(GameManager* gameManager)
+{
+    UnloadGameTextures();
+    ShutdownAudio(&gameManager->gameState);
+    CloseWindow();
 }
 
 void RunGameManager(GameManager* gameManager)
 {
-    // Main game loop - super simple!
+    // Main game loop
     while (!gameManager->shouldQuit && !WindowShouldClose())
     {
         // Handle state transitions
-        if (gameManager->nextStateID != gameManager->currentStateID)
+        if (gameManager->nextState != gameManager->currentState)
         {
-            SetGameManagerState(gameManager, gameManager->nextStateID);
+            SetGameManagerState(gameManager, gameManager->nextState);
         }
 
-        // Run the current state based on enum
-        switch (gameManager->currentStateID)
+        // Update the current state
+        switch (gameManager->currentState)
         {
         case STATE_MAIN_MENU:
-            StateMainMenu(gameManager);
+            UpdateMainMenu(gameManager);
             break;
         case STATE_PLAYING:
-            StateGameplay(gameManager);
+            UpdateGameplay(gameManager);
             break;
         case STATE_GAME_OVER:
-            StateGameOver(gameManager);
+            UpdateGameOver(gameManager);
             break;
         case STATE_QUIT:
             gameManager->shouldQuit = true;
@@ -54,23 +59,22 @@ void RunGameManager(GameManager* gameManager)
     }
 }
 
+// Any cleanup from old state could go here
 void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
 {
-    // Any cleanup from old state could go here
-
-    gameManager->currentStateID = newStateID;
+    gameManager->currentState = newStateID;
 
     // Any initialization for new state could go here
     switch (newStateID)
     {
     case STATE_MAIN_MENU:
-        // Initialize menu if needed
+        gameManager->selectedMenuOption = 0;
         break;
     case STATE_PLAYING:
         // Game already initialized
         break;
     case STATE_GAME_OVER:
-        // Maybe play game over sound
+        gameManager->selectedMenuOption = 0;
         break;
     case STATE_QUIT:
         gameManager->shouldQuit = true;
@@ -78,82 +82,62 @@ void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
     }
 }
 
-void ShutdownGameManager(GameManager* gameManager)
+
+void UpdateMainMenu(GameManager* gameManager)
 {
-    UnloadSound(gameManager->gameState.collisionSound);
-    UnloadSound(gameManager->gameState.eatSound);
-    UnloadSnakeTextures();
-    CloseAudioDevice();
-    CloseWindow();
-}
+    // Input
+    InputAction input = ReadMenuInput();
 
-// ============================================================================
-// STATE IMPLEMENTATIONS - Each is a complete input/update/render cycle
-// ============================================================================
-
-void StateMainMenu(GameManager* gameManager)
-{
-    // INPUT
-    InputAction input = ReadInputMenu();
-
-    // UPDATE
-    if (input == INPUT_UP && gameManager->selectedMenuOption > 0) {
+    // Update
+    if (input == INPUT_UP && gameManager->selectedMenuOption > 0) 
+    {
         gameManager->selectedMenuOption--;
     }
-    else if (input == INPUT_DOWN && gameManager->selectedMenuOption < 1) { // 1 = number of options - 1
+    else if (input == INPUT_DOWN && gameManager->selectedMenuOption < 1) 
+    { 
         gameManager->selectedMenuOption++;
     }
-    else if (input == INPUT_SELECT && gameManager->selectedMenuOption == 0) {
-        gameManager->nextStateID = STATE_PLAYING; // Start game if Enter on "Start Game"
+
+    if (input == INPUT_SELECT && gameManager->selectedMenuOption == 0) 
+    {
+        gameManager->nextState = STATE_PLAYING; // Start game if Enter on "Start Game"
     }
-    else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == 1)) {
-        gameManager->nextStateID = STATE_QUIT; // Quit if Enter on "Exit"
+    else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == 1)) 
+    {
+        gameManager->nextState = STATE_QUIT; // Quit if Enter on "Exit"
     }
 
-    // RENDER
-    BeginDrawing();
-    Color backgroundColor = { 0x2D, 0x27, 0x2F, 0xFF };
-    ClearBackground(backgroundColor);
-    DrawMainMenu(gameManager->selectedMenuOption);
-    EndDrawing();
+    // Render
+    RenderMainMenu(gameManager->selectedMenuOption);
 }
 
-void StateGameplay(GameManager* gameManager)
+void UpdateGameplay(GameManager* gameManager)
 {
     float deltaTime = GetFrameTime();
 
-    // INPUT
-    InputAction input = ReadInputGame();
-    HandleInputGame(&gameManager->gameState.snake, input);
+    // Input
+    InputAction input = ReadGameInput();
+    HandleSnakeInput(&gameManager->gameState.snake, input);
 
-    // UPDATE
+    // Update
     UpdateGame(&gameManager->gameState, deltaTime);
 
-    // Check for game over transition
+    // Check transitions
     if (gameManager->gameState.isGameOver)
     {
-        gameManager->nextStateID = STATE_GAME_OVER;
+        gameManager->nextState = STATE_GAME_OVER;
     }
 
-    // RENDER
-    BeginDrawing();
-    Color backgroundColor = { 0x2D, 0x27, 0x2F, 0xFF };
-    ClearBackground(backgroundColor);
-
-    DrawGameBoard();
-    DrawGameUI(gameManager->gameState.score, gameManager->gameState.highScore);
-    DrawSnake(gameManager->gameState.snake);
-    DrawFood(gameManager->gameState.food);
-
-    EndDrawing();
+    // Render
+    RenderGameplay(gameManager);
 }
 
-void StateGameOver(GameManager* gameManager)
+void UpdateGameOver(GameManager* gameManager)
 {
-    // INPUT
-    InputAction input = ReadInputMenu();
+    // Input
+    InputAction input = ReadMenuInput();
 
-    // UPDATE
+    // Update
     if (input == INPUT_UP && gameManager->selectedMenuOption > 0) 
     {
         gameManager->selectedMenuOption--;
@@ -165,23 +149,19 @@ void StateGameOver(GameManager* gameManager)
     else if (input == INPUT_SELECT && gameManager->selectedMenuOption == 0) 
     {
         InitGame(&gameManager->gameState); 
-        gameManager->nextStateID = STATE_MAIN_MENU; 
+        gameManager->nextState = STATE_MAIN_MENU; 
     }
     else if (input == INPUT_SELECT && gameManager->selectedMenuOption == 1) //RESTART
     {
         InitGame(&gameManager->gameState);
-        gameManager->nextStateID = STATE_PLAYING; 
+        gameManager->nextState = STATE_PLAYING; 
     }
     else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == 2))
     {
-        gameManager->nextStateID = STATE_QUIT;
+        gameManager->nextState = STATE_QUIT;
     }
 
 
-    // RENDER
-    BeginDrawing();
-    Color backgroundColor = { 0x2D, 0x27, 0x2F, 0xFF };
-    ClearBackground(backgroundColor);
-    DrawGameOverMenu(gameManager->selectedMenuOption, gameManager->gameState.score, gameManager->gameState.highScore);
-    EndDrawing();
+    // Render
+    RenderGameOver(gameManager->selectedMenuOption, gameManager->gameState.score, gameManager->gameState.highScore);
 }

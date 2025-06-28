@@ -1,15 +1,17 @@
 #include <raylib.h>
+#include "GameManager.h"
 #include "Renderer.h"
 #include "Game.h"
 #include "Types.h"
 
-// snake colour CA0004
+
 Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };
-Color const borderColor = { 0x5A, 0x54, 0x62, 0xFF };
+Color const borderColour = { 0x5A, 0x54, 0x62, 0xFF };
+Color const backgroundColour = { 0x2D, 0x27, 0x2F, 0xFF };
 
 static Texture2D snakeAtlas = { 0 };
 
-void LoadSnakeTextures()
+void LoadGameTextures()
 {
     snakeAtlas = LoadTexture("assets/snake_atlas.png"); // when run with cmake in root dir
 
@@ -28,7 +30,7 @@ void LoadSnakeTextures()
     }
 }
 
-void UnloadSnakeTextures()
+void UnloadGameTextures()
 {
     if (snakeAtlas.id > 0)
     {
@@ -58,7 +60,7 @@ void DrawGameBoard()
           GAME_HEIGHT + 10
     };
 
-    DrawRectangleLinesEx(borderRect, borderThickness, borderColor);
+    DrawRectangleLinesEx(borderRect, borderThickness, borderColour);
 }
 
 void DrawGameUI(int score, int highScore)
@@ -96,23 +98,23 @@ Rectangle GetHeadSpriteRect(Direction direction)
     return out;
 }
 
-void DrawSnake(const Snake& snake)
+void DrawSnake(const Snake* snake)
 {
-    for (int i = 1; i < snake.length; i++) 
+    for (int i = 1; i < snake->length; i++) 
     {
-        int pixelX = GAME_OFFSET + (int)(snake.bodyPart[i].position.x * TILE_SIZE);
-        int pixelY = GAME_OFFSET + (int)(snake.bodyPart[i].position.y * TILE_SIZE);
+        int pixelX = GAME_OFFSET + (int)(snake->bodyPart[i].position.x * TILE_SIZE);
+        int pixelY = GAME_OFFSET + (int)(snake->bodyPart[i].position.y * TILE_SIZE);
 
         DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, snakeColour);
     }
 
-    int headX = GAME_OFFSET + (int)(snake.bodyPart[0].position.x * TILE_SIZE);
-    int headY = GAME_OFFSET + (int)(snake.bodyPart[0].position.y * TILE_SIZE);
+    int headX = GAME_OFFSET + (int)(snake->bodyPart[0].position.x * TILE_SIZE);
+    int headY = GAME_OFFSET + (int)(snake->bodyPart[0].position.y * TILE_SIZE);
 
     if (snakeAtlas.id > 0)
     {
         // Get the correct sprite rectangle for the snake's direction
-        Rectangle sourceRect = GetHeadSpriteRect(snake.currentDirection);
+        Rectangle sourceRect = GetHeadSpriteRect(snake->currentDirection);
 
         // Destination rectangle (where to draw on screen)
         Rectangle destRect = {headX, headY, TILE_SIZE, TILE_SIZE};
@@ -128,10 +130,10 @@ void DrawSnake(const Snake& snake)
     }
 }
 
-void DrawFood(const Food& food)
+void DrawFood(const Food* food)
 {
-    int pixelX = GAME_OFFSET + (int)(food.position.x * TILE_SIZE);
-    int pixelY = GAME_OFFSET + (int)(food.position.y * TILE_SIZE);
+    int pixelX = GAME_OFFSET + (int)(food->position.x * TILE_SIZE);
+    int pixelY = GAME_OFFSET + (int)(food->position.y * TILE_SIZE);
 
 
     if (snakeAtlas.id > 0)
@@ -148,30 +150,19 @@ void DrawFood(const Food& food)
     }
 }
 
-void DrawGamePlay(GameManager* gameManager)
-{
-    BeginDrawing();
-
-    Color backgroundColor = { 0x2D, 0x27, 0x2F, 0xFF }; // Dark purple background
-    ClearBackground(backgroundColor);
-
-    DrawGameBoard();
-    DrawGameUI(gameManager->gameState.score, gameManager->gameState.highScore);
-    DrawSnake(gameManager->gameState.snake);
-    DrawFood(gameManager->gameState.food);
-
-    EndDrawing();
-}
-
-void DrawMainMenu(int selectedOption)
+void RenderMainMenu(int selectedOption)
 {
     const char* title = "SNAKE GAME";
     const char* options[] = { "Start Game", "Exit" };
     const int optionCount = sizeof(options) / sizeof(options[0]);
 
     // Calculate positions
-    int titleWidth = MeasureText(title, TITLE_FONT_SIZE);
-    int titleX = (GetScreenWidth() - titleWidth) / 2;
+    const int titleWidth = MeasureText(title, TITLE_FONT_SIZE);
+    const int titleX = (GetScreenWidth() - titleWidth) / 2;
+
+    BeginDrawing();
+
+    ClearBackground(backgroundColour);
 
     DrawText(title, titleX, TITLE_Y, TITLE_FONT_SIZE, RAYWHITE);
 
@@ -196,21 +187,38 @@ void DrawMainMenu(int selectedOption)
     int instrWidth = MeasureText(instructions, INSTRUCTION_FONT_SIZE);
     int instrX = (GetScreenWidth() - instrWidth) / 2;
     DrawText(instructions, instrX, TITLE_Y + VERTICAL_SPACING * 3, INSTRUCTION_FONT_SIZE, GRAY);
+
+    EndDrawing();
 }
 
-void DrawGameOverMenu(int selectedOption, int score, int highScore)
+void RenderGameplay(GameManager* gameManager)
+{
+    BeginDrawing();
+
+    ClearBackground(backgroundColour);
+    DrawGameBoard();
+    DrawGameUI(gameManager->gameState.score, gameManager->gameState.highScore);
+    DrawSnake(&gameManager->gameState.snake);
+    DrawFood(&gameManager->gameState.food);
+
+    EndDrawing();
+}
+
+
+
+void RenderGameOver(int selectedOption, int score, int highScore)
 {
     const int scoreFontSize = 25;
-
     const char* title = "GAME OVER";
     const char* options[] = { "Main Menu", "Restart", "Quit" };
     const int optionCount = sizeof(options) / sizeof(options[0]);
-
     // Calculate positions
-    int titleWidth = MeasureText(title, TITLE_FONT_SIZE);
-    int titleX = (GetScreenWidth() - titleWidth) / 2;
+    const int titleWidth = MeasureText(title, TITLE_FONT_SIZE);
+    const int titleX = (GetScreenWidth() - titleWidth) / 2;
 
-    // Draw title
+    BeginDrawing();
+
+    ClearBackground(backgroundColour);
     DrawText(title, titleX, TITLE_Y, TITLE_FONT_SIZE, RED);
 
     // Draw scores
@@ -245,4 +253,6 @@ void DrawGameOverMenu(int selectedOption, int score, int highScore)
     int instrWidth = MeasureText(instructions, INSTRUCTION_FONT_SIZE);
     int instrX = (GetScreenWidth() - instrWidth) / 2;
     DrawText(instructions, instrX, TITLE_Y + 150 + (optionCount * VERTICAL_SPACING), INSTRUCTION_FONT_SIZE, GRAY);
+
+    EndDrawing();
 }

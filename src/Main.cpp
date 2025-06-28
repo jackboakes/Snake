@@ -1,8 +1,5 @@
 #include <raylib.h>
-#include"Game.h"
-#include "Input.h"
-#include "Renderer.h"
-
+#include "GameManager.h"
 
 #define SCREEN_WIDTH 768
 #define SCREEN_HEIGHT 768
