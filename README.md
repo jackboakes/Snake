@@ -2,7 +2,7 @@
 
 A classic Snake game implemented in C-Style C++ using Raylib.
 
-## Prerequisites
+## Requirements
 
 - Windows 10 or later
 - Git
