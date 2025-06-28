@@ -93,17 +93,17 @@ Rectangle GetHeadSpriteRect(Direction direction)
     default:        spriteIndex = 0; break;  // Default to north
     }
 
-    Rectangle out = { spriteIndex * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE };
+    Rectangle rect = { (float)(spriteIndex * TILE_SIZE), (float)0, (float)TILE_SIZE, (float)TILE_SIZE };
 
-    return out;
+    return rect;
 }
 
 void DrawSnake(const Snake* snake)
 {
     for (int i = 1; i < snake->length; i++) 
     {
-        int pixelX = GAME_OFFSET + (int)(snake->bodyPart[i].position.x * TILE_SIZE);
-        int pixelY = GAME_OFFSET + (int)(snake->bodyPart[i].position.y * TILE_SIZE);
+        int pixelX = GAME_OFFSET + (snake->bodyPart[i].position.x * TILE_SIZE);
+        int pixelY = GAME_OFFSET + (snake->bodyPart[i].position.y * TILE_SIZE);
 
         DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, snakeColour);
     }
@@ -117,7 +117,7 @@ void DrawSnake(const Snake* snake)
         Rectangle sourceRect = GetHeadSpriteRect(snake->currentDirection);
 
         // Destination rectangle (where to draw on screen)
-        Rectangle destRect = {headX, headY, TILE_SIZE, TILE_SIZE};
+        Rectangle destRect = { (float)headX, (float)headY, (float)TILE_SIZE, (float)TILE_SIZE};
 
         // Draw the sprite (no rotation needed since we have pre-rotated sprites)
         DrawTexturePro(snakeAtlas, sourceRect, destRect, { 0, 0 }, 0.0f, WHITE);
@@ -125,22 +125,22 @@ void DrawSnake(const Snake* snake)
     else
     {
         // Fallback to rounded rectangle if texture isn't loaded
-        Rectangle headPos = { headX, headY, TILE_SIZE, TILE_SIZE };
+        Rectangle headPos = { (float)headX, (float)headY, (float)TILE_SIZE, (float)TILE_SIZE };
         DrawRectangleRounded(headPos, 0.5, 6, snakeColour);
     }
 }
 
 void DrawFood(const Food* food)
 {
-    int pixelX = GAME_OFFSET + (int)(food->position.x * TILE_SIZE);
-    int pixelY = GAME_OFFSET + (int)(food->position.y * TILE_SIZE);
+    int pixelX = GAME_OFFSET + (food->position.x * TILE_SIZE);
+    int pixelY = GAME_OFFSET + (food->position.y * TILE_SIZE);
 
 
     if (snakeAtlas.id > 0)
     {
         Rectangle foodRect = { 0, 2 * TILE_SIZE, TILE_SIZE,TILE_SIZE };
 
-        Rectangle destRect = {pixelX, pixelY, TILE_SIZE, TILE_SIZE};
+        Rectangle destRect = { (float)pixelX, (float)pixelY, (float)TILE_SIZE, (float)TILE_SIZE};
 
         DrawTexturePro(snakeAtlas, foodRect, destRect, { 0, 0 }, 0.0f, WHITE);
     }

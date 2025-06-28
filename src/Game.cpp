@@ -108,7 +108,7 @@ void InitSnake(Snake* snake)
     // Snake spawns left and centre of game area
     const int leftX = initSnakeSize + 1;
     const int halfY = GRID_SIZE / 2;
-    Vector2 startPos = { leftX,  halfY };
+    GridPosition startPos = { leftX,  halfY };
 
     snake->length = initSnakeSize;
     snake->currentDirection = DIR_EAST;
@@ -225,7 +225,7 @@ void UpdateFood(GameState* gameState)
 
     do
     {
-        Vector2 newFoodPos;
+        GridPosition newFoodPos = { 0 };
 
         // Raylibs getrandom value
         newFoodPos.x = GetRandomValue(1, GRID_SIZE - 2);  

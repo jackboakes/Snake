@@ -31,7 +31,7 @@ int LoadHighScore(void)
 bool SaveHighScore(int score)
 {
     char scoreText[32];
-    sprintf(scoreText, "%d", score);
+    sprintf_s(scoreText, sizeof(scoreText), "%d", score);;
 
     return SaveFileText(HIGHSCORE_FILE, scoreText);
 }
