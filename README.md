@@ -7,7 +7,7 @@ A classic Snake game implemented in C-Style C++ using Raylib.
 - Windows 10 or later
 - Git
 - CMake (version 3.11 or later)
-- MSVC
+- A C++17-compatible compiler
 
 
 ## Getting Started
