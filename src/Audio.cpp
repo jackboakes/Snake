@@ -35,7 +35,7 @@ void PlayCollisionSound(GameState* gameState)
 {
 	const int lowerPitch = 95;
 	const int higherPitch = 105;
-	RandomiseSoundPitch(lowerPitch, higherPitch, gameState->eatSound);
+	RandomiseSoundPitch(lowerPitch, higherPitch, gameState->collisionSound);
 	PlaySound(gameState->collisionSound);
 }
 
