@@ -21,7 +21,7 @@ git clone https://github.com/jackboakes/Snake.git
 cd Snake
 ```
 
-3. Genenerate build files and build the project:
+3. Generate build files and build the project:
 ```
 cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release
 ```
