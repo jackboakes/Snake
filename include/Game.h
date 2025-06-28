@@ -86,6 +86,7 @@ void HandleGameOver(GameState* gameState);
 // Snake functions
 void InitSnake(Snake* snake);
 void UpdateSnake(Snake* snake, float deltaTime);
+void GrowSnake(Snake* snake);
 void HandleSnakeInput(Snake* snake, InputAction input);
 bool CheckWallCollison(const Snake* snake);
 bool CheckSelfCollision(const Snake* snake);
@@ -93,7 +94,7 @@ bool CheckSelfCollision(const Snake* snake);
 // Food functions
 void UpdateFood(GameState* gameState);
 bool CheckFoodCollision(const Snake* snake, const Food* food);
-void HandleFoodCollision(GameState* gameState);
+void HandleFoodEat(GameState* gameState);
 
 
 

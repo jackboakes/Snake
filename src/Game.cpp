@@ -127,10 +127,11 @@ void InitSnake(Snake* snake)
     }
 }
 
+// Moves the snake
 void UpdateSnake(Snake* snake, float deltaTime)
 {
-
-    snake->moveTimer += deltaTime; // Accumulate time
+    // Accumulate time
+    snake->moveTimer += deltaTime; 
 
     float moveInterval = 1.0f / snake->moveSpeed;
     if (snake->moveTimer >= moveInterval)
@@ -154,6 +155,19 @@ void UpdateSnake(Snake* snake, float deltaTime)
         snake->bodyPart[0].position.x += dirOnGrid.x;
         snake->bodyPart[0].position.y += dirOnGrid.y;
     }
+}
+
+void GrowSnake(Snake* snake) 
+{
+    GridPosition dirOffset = DirectionToGridOffset(snake->currentDirection);
+    int newTailIndex = snake->length;
+
+    snake->bodyPart[newTailIndex].position.x =
+        snake->bodyPart[newTailIndex - 1].position.x - dirOffset.x;
+    snake->bodyPart[newTailIndex].position.y =
+        snake->bodyPart[newTailIndex - 1].position.y - dirOffset.y;
+
+    snake->length++;
 }
 
 void HandleSnakeInput(Snake* snake, InputAction input)
@@ -243,24 +257,12 @@ bool CheckFoodCollision(const Snake* snake, const Food* food)
         food->position.y == snake->bodyPart[0].position.y);
 }
 
-// Checks wether you collide with the food or not and grows the tail
-void HandleFoodCollision(GameState* gameState) {
-    if (CheckFoodCollision(&gameState->snake, &gameState->food)) 
-    {
-        PlayEatSound(gameState);
 
-        GridPosition dirOffset = DirectionToGridOffset(gameState->snake.currentDirection);
-        int newTailIndex = gameState->snake.length;
-
-        gameState->snake.bodyPart[newTailIndex].position.x =
-            gameState->snake.bodyPart[newTailIndex - 1].position.x - dirOffset.x;
-        gameState->snake.bodyPart[newTailIndex].position.y =
-            gameState->snake.bodyPart[newTailIndex - 1].position.y - dirOffset.y;
-
-        gameState->snake.length++;
-        gameState->score += 5;
-        UpdateFood(gameState);
-    }
+void HandleFoodEat(GameState* gameState) {
+    PlayEatSound(gameState);
+    GrowSnake(&gameState->snake);
+    gameState->score += 5;
+    UpdateFood(gameState);
 }
 
 void HandleGameOver(GameState* gameState)
@@ -272,15 +274,15 @@ void HandleGameOver(GameState* gameState)
 
 void GameLogic(GameState* gameState)
 {
-    HandleFoodCollision(gameState);
+    if (CheckFoodCollision(&gameState->snake, &gameState->food)) {
+        HandleFoodEat(gameState);
+    }
 
     if (CheckWallCollision(&gameState->snake) ||
         CheckSelfCollision(&gameState->snake))
     {
         HandleGameOver(gameState);
     }
-
-
 }
 
 
