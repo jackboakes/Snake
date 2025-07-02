@@ -159,13 +159,12 @@ void UpdateSnake(Snake* snake, float deltaTime)
 
 void GrowSnake(Snake* snake) 
 {
-    GridPosition dirOffset = DirectionToGridOffset(snake->currentDirection);
+    int currentTailIndex = snake->length - 1;
     int newTailIndex = snake->length;
 
-    snake->bodyPart[newTailIndex].position.x =
-        snake->bodyPart[newTailIndex - 1].position.x - dirOffset.x;
-    snake->bodyPart[newTailIndex].position.y =
-        snake->bodyPart[newTailIndex - 1].position.y - dirOffset.y;
+    // Simply duplicate the current tail position
+    snake->bodyPart[newTailIndex].position.x = snake->bodyPart[currentTailIndex].position.x;
+    snake->bodyPart[newTailIndex].position.y = snake->bodyPart[currentTailIndex].position.y;
 
     snake->length++;
 }
