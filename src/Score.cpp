@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include "Score.h"
-#include <stdio.h> // sprintf
 
 
 
@@ -30,7 +29,7 @@ int LoadHighScore(void)
 bool SaveHighScore(int score)
 {
     char scoreText[32];
-    sprintf_s(scoreText, sizeof(scoreText), "%d", score);;
+    TextCopy(scoreText, TextFormat("%d", score));
 
     return SaveFileText(HIGHSCORE_FILE, scoreText);
 }

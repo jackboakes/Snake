@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include "Game.h"
 #include "Types.h"
-#include "assets.h"
+#include "Assets.h"
 
 
 Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };

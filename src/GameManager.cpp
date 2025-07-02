@@ -2,10 +2,9 @@
 #include "GameManager.h"
 #include "Types.h"
 #include "Input.h"
-#include "Game.h"
 #include "Renderer.h"
 #include "Audio.h"
-#include "Score.h" 
+
 
 
 

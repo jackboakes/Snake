@@ -3,10 +3,8 @@
 
 #include <raylib.h>
 #include "Types.h"
-#include "Input.h"
 #include "Game.h"
-#include "Renderer.h"
-#include "Score.h" 
+
 
 
 // Used to control states
