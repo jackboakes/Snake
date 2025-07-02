@@ -30,6 +30,9 @@ cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Releas
 ```
 build\Release\Snake.exe
 ```
+## Gameplay Demo
+
+https://github.com/user-attachments/assets/a620f365-8814-488e-b2fa-a5c8e2812360
 
 ## Controls
 
