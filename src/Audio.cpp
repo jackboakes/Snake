@@ -1,12 +1,13 @@
-#include <raylib.h>
+#include "raylib.h"
 #include "GameManager.h"
+#include "Assets.h"
 
 // TODO: if you need more sounds refactor the master struct to store them in a vector
 void InitAudio(GameState* gameState)
 {
 	InitAudioDevice();
-	gameState->eatSound = LoadSound("assets/sfx_snake_eat.wav");
-	gameState->collisionSound = LoadSound("assets/sfx_snake_collision.wav");
+	gameState->eatSound = LoadSound(GetAssetPath("sfx_snake_eat.wav"));
+	gameState->collisionSound = LoadSound(GetAssetPath("sfx_snake_collision.wav"));
 }
 
 void ShutdownAudio(GameState* gameState)

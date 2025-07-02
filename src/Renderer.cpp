@@ -1,8 +1,9 @@
-#include <raylib.h>
+#include "raylib.h"
 #include "GameManager.h"
 #include "Renderer.h"
 #include "Game.h"
 #include "Types.h"
+#include "assets.h"
 
 
 Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };
@@ -13,12 +14,7 @@ static Texture2D snakeAtlas = { 0 };
 
 void LoadGameTextures()
 {
-    snakeAtlas = LoadTexture("assets/snake_atlas.png"); // when run with cmake in root dir
-
-    if (snakeAtlas.id == 0) {
-        // Fallback to build directory (when run by clicking exe)
-        snakeAtlas = LoadTexture("../../assets/snake_atlas.png");
-    }
+    snakeAtlas = LoadTexture(GetAssetPath("snake_atlas.png"));
 
     if (snakeAtlas.id > 0)
     {
@@ -173,12 +169,15 @@ void RenderMainMenu(int selectedOption)
         int optionY = TITLE_Y + VERTICAL_SPACING + (i * VERTICAL_SPACING);
 
         Color color;
-        if (i == selectedOption) {
+        if (i == selectedOption) 
+        {
             color = YELLOW;
         }
-        else {
+        else 
+        {
             color = RAYWHITE;
         }
+
         DrawText(options[i], optionX, optionY, OPTION_FRONT_SIZE, color);
     }
 
@@ -194,13 +193,11 @@ void RenderMainMenu(int selectedOption)
 void RenderGameplay(GameManager* gameManager)
 {
     BeginDrawing();
-
     ClearBackground(backgroundColour);
     DrawGameBoard();
-    DrawGameUI(gameManager->gameState.score, gameManager->gameState.highScore);
     DrawSnake(&gameManager->gameState.snake);
     DrawFood(&gameManager->gameState.food);
-
+    DrawGameUI(gameManager->gameState.score, gameManager->gameState.highScore);
     EndDrawing();
 }
 

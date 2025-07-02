@@ -1,7 +1,6 @@
+#include "raylib.h"
 #include "Score.h"
-#include <raylib.h>
 #include <stdio.h> // sprintf
-#include <string> // std::stoi
 
 
 
@@ -15,7 +14,7 @@ int LoadHighScore(void)
 
         if (fileText != NULL)
         {
-            highScore = std::stoi(fileText);
+            highScore = TextToInteger(fileText); // replaced stoi
             UnloadFileText(fileText);
         }
     }

@@ -34,6 +34,7 @@ set(SOURCES
     src/Input.cpp
     src/Score.cpp
     src/Audio.cpp
+    src/Assets.cpp
 )
 
 # Our Project
