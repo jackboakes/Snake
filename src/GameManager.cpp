@@ -5,7 +5,20 @@
 #include "Renderer.h"
 #include "Audio.h"
 
+enum MainMenuOption
+{
+    MAIN_MENU_START,
+    MAIN_MENU_EXIT,
+    MAIN_MENU_OPTION_COUNT
+};
 
+enum GameOverOption
+{
+    GAME_OVER_MAIN_MENU,
+    GAME_OVER_RESTART,
+    GAME_OVER_EXIT,
+    GAME_OVER_OPTION_COUNT
+};
 
 
 void InitGameManager(GameManager* gameManager)
@@ -17,8 +30,7 @@ void InitGameManager(GameManager* gameManager)
 
     InitAudio(&gameManager->gameState);
     LoadGameTextures();
-
-    InitGame(&gameManager->gameState);
+    UpdateWindowIcon();
 }
 
 void ShutdownGameManager(GameManager* gameManager)
@@ -59,7 +71,7 @@ void RunGameManager(GameManager* gameManager)
 }
 
 // Any cleanup from old state could go here
-void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
+static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
 {
     gameManager->currentState = newStateID;
 
@@ -70,7 +82,7 @@ void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
         gameManager->selectedMenuOption = 0;
         break;
     case STATE_PLAYING:
-        // Game already initialized
+        InitGame(&gameManager->gameState);
         break;
     case STATE_GAME_OVER:
         gameManager->selectedMenuOption = 0;
@@ -82,26 +94,26 @@ void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
 }
 
 
-void UpdateMainMenu(GameManager* gameManager)
+static void UpdateMainMenu(GameManager* gameManager)
 {
     // Input
     InputAction input = ReadMenuInput();
 
     // Update
-    if (input == INPUT_UP && gameManager->selectedMenuOption > 0) 
+    if (input == INPUT_UP && gameManager->selectedMenuOption > MAIN_MENU_START) 
     {
         gameManager->selectedMenuOption--;
     }
-    else if (input == INPUT_DOWN && gameManager->selectedMenuOption < 1) 
+    else if (input == INPUT_DOWN && gameManager->selectedMenuOption < (MAIN_MENU_OPTION_COUNT -1 )) 
     { 
         gameManager->selectedMenuOption++;
     }
 
-    if (input == INPUT_SELECT && gameManager->selectedMenuOption == 0) 
+    if (input == INPUT_SELECT && gameManager->selectedMenuOption == MAIN_MENU_START)
     {
         gameManager->nextState = STATE_PLAYING; // Start game if Enter on "Start Game"
     }
-    else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == 1)) 
+    else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == MAIN_MENU_EXIT))
     {
         gameManager->nextState = STATE_QUIT; // Quit if Enter on "Exit"
     }
@@ -110,7 +122,7 @@ void UpdateMainMenu(GameManager* gameManager)
     RenderMainMenu(gameManager->selectedMenuOption);
 }
 
-void UpdateGameplay(GameManager* gameManager)
+static void UpdateGameplay(GameManager* gameManager)
 {
     float deltaTime = GetFrameTime();
 
@@ -131,31 +143,32 @@ void UpdateGameplay(GameManager* gameManager)
     RenderGameplay(gameManager);
 }
 
-void UpdateGameOver(GameManager* gameManager)
+static void UpdateGameOver(GameManager* gameManager)
 {
     // Input
     InputAction input = ReadMenuInput();
 
     // Update
-    if (input == INPUT_UP && gameManager->selectedMenuOption > 0) 
+    if (input == INPUT_UP && gameManager->selectedMenuOption > GAME_OVER_MAIN_MENU) 
     {
         gameManager->selectedMenuOption--;
     }
-    else if (input == INPUT_DOWN && gameManager->selectedMenuOption < 2) 
+    else if (input == INPUT_DOWN && gameManager->selectedMenuOption < (GAME_OVER_OPTION_COUNT - 1)) 
     {
         gameManager->selectedMenuOption++;
     }
-    else if (input == INPUT_SELECT && gameManager->selectedMenuOption == 0) 
+
+    if (input == INPUT_SELECT && gameManager->selectedMenuOption == GAME_OVER_MAIN_MENU)
     {
         InitGame(&gameManager->gameState); 
         gameManager->nextState = STATE_MAIN_MENU; 
     }
-    else if (input == INPUT_SELECT && gameManager->selectedMenuOption == 1) //RESTART
+    else if (input == INPUT_SELECT && gameManager->selectedMenuOption == GAME_OVER_RESTART) 
     {
         InitGame(&gameManager->gameState);
         gameManager->nextState = STATE_PLAYING; 
     }
-    else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == 2))
+    else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == GAME_OVER_EXIT))
     {
         gameManager->nextState = STATE_QUIT;
     }

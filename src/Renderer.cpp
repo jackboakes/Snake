@@ -6,9 +6,13 @@
 #include "Assets.h"
 
 
-Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };
-Color const borderColour = { 0x5A, 0x54, 0x62, 0xFF };
-Color const backgroundColour = { 0x2D, 0x27, 0x2F, 0xFF };
+static Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };
+static Color const borderColour = { 0x5A, 0x54, 0x62, 0xFF };
+static Color const backgroundColour = { 0x2D, 0x27, 0x2F, 0xFF };
+static Color const boardColors[2] = {
+    { 0x49, 0x43, 0x51, 0xFF },  // light
+    { 0x44, 0x3E, 0x4C, 0xFF }   // dark
+};
 
 static Texture2D snakeAtlas = { 0 };
 
@@ -34,7 +38,16 @@ void UnloadGameTextures()
     }
 }
 
-void DrawGameBoard()
+void UpdateWindowIcon()
+{
+    Image fullSnakeAtlas = LoadImageFromTexture(snakeAtlas);
+    Rectangle iconSpriteRect = GetHeadSpriteRect(DIR_SOUTH);
+    Image windowIcon = ImageFromImage(fullSnakeAtlas, iconSpriteRect);
+
+    SetWindowIcon(windowIcon);
+}
+
+static void DrawGameBoard()
 {
     const int borderThickness = 5;
 
@@ -59,7 +72,7 @@ void DrawGameBoard()
     DrawRectangleLinesEx(borderRect, borderThickness, borderColour);
 }
 
-void DrawGameUI(int score, int highScore)
+static void DrawGameUI(int score, int highScore)
 {
     const int fontSize = 40;
     const int yPosition = 20;
@@ -76,7 +89,7 @@ void DrawGameUI(int score, int highScore)
     DrawText(highScoreText, rightAlignedX, yPosition, fontSize, YELLOW);
 }
 
-Rectangle GetHeadSpriteRect(Direction direction)
+static Rectangle GetHeadSpriteRect(Direction direction)
 {
     int spriteIndex = 0;
 
@@ -94,7 +107,7 @@ Rectangle GetHeadSpriteRect(Direction direction)
     return rect;
 }
 
-void DrawSnake(const Snake* snake)
+static void DrawSnake(const Snake* snake)
 {
     for (int i = 1; i < snake->length; i++) 
     {
@@ -126,7 +139,7 @@ void DrawSnake(const Snake* snake)
     }
 }
 
-void DrawFood(const Food* food)
+static void DrawFood(const Food* food)
 {
     int pixelX = GAME_OFFSET + (food->position.x * TILE_SIZE);
     int pixelY = GAME_OFFSET + (food->position.y * TILE_SIZE);

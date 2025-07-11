@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "Input.h"
 
+
 InputAction ReadMenuInput()
 {
 	if (IsKeyPressed(KEY_W))

@@ -74,27 +74,27 @@ Direction DequeueDirection(DirectionQueue* queue);
 Direction GetNextDirection(DirectionQueue* queue);
 
 // Helper functions
-GridPosition DirectionToGridOffset(Direction dir);
-bool IsOppositeDirection(Direction dir1, Direction dir2);
+static GridPosition DirectionToGridOffset(Direction dir);
+static bool IsOppositeDirection(Direction dir1, Direction dir2);
 
 // Game logic functions
 void InitGame(GameState* gameState);
 void UpdateGame(GameState* gameState, float deltaTime);
-void GameLogic(GameState* gameState);
-void HandleGameOver(GameState* gameState);
+static void GameLogic(GameState* gameState);
+static void HandleGameOver(GameState* gameState);
 
 // Snake functions
-void InitSnake(Snake* snake);
-void UpdateSnake(Snake* snake, float deltaTime);
-void GrowSnake(Snake* snake);
+static void InitSnake(Snake* snake);
+static void UpdateSnake(Snake* snake, float deltaTime);
+static void GrowSnake(Snake* snake);
 void HandleSnakeInput(Snake* snake, InputAction input);
-bool CheckWallCollison(const Snake* snake);
-bool CheckSelfCollision(const Snake* snake);
+static bool CheckWallCollison(const Snake* snake);
+static bool CheckSelfCollision(const Snake* snake);
 
 // Food functions
-void UpdateFood(GameState* gameState);
-bool CheckFoodCollision(const Snake* snake, const Food* food);
-void HandleFoodEat(GameState* gameState);
+static void UpdateFood(GameState* gameState);
+static bool CheckFoodCollision(const Snake* snake, const Food* food);
+static void HandleFoodEat(GameState* gameState);
 
 
 

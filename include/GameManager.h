@@ -6,7 +6,6 @@
 #include "Game.h"
 
 
-
 // Used to control states
 struct GameManager
 {
@@ -25,11 +24,11 @@ void ShutdownGameManager(GameManager* gameManager);
 void RunGameManager(GameManager* gameManager);
 
 // State management
-void SetGameManagerState(GameManager* gameManager, GameStateID newStateID);
+static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID);
 
 // State update functions - each is a complete input, update, render cycle
-void UpdateMainMenu(GameManager* gameManager);
-void UpdateGameplay(GameManager* gameManager);
-void UpdateGameOver(GameManager* gameManager);
+static void UpdateMainMenu(GameManager* gameManager);
+static void UpdateGameplay(GameManager* gameManager);
+static void UpdateGameOver(GameManager* gameManager);
 
 #endif 

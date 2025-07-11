@@ -63,7 +63,7 @@ Direction GetNextDirection(DirectionQueue* queue)
     return queue->dirValues[queue->head];
 }
 
-GridPosition DirectionToGridOffset(Direction dir)
+static GridPosition DirectionToGridOffset(Direction dir)
 {
     switch (dir)
     {
@@ -75,7 +75,7 @@ GridPosition DirectionToGridOffset(Direction dir)
     }
 }
 
-bool IsOppositeDirection(Direction dir1, Direction dir2)
+static bool IsOppositeDirection(Direction dir1, Direction dir2)
 {
     return (dir1 == DIR_NORTH && dir2 == DIR_SOUTH) ||
         (dir1 == DIR_SOUTH && dir2 == DIR_NORTH) ||
@@ -101,7 +101,7 @@ void UpdateGame(GameState* gameState, float deltaTime)
     }
 }
 
-void InitSnake(Snake* snake)
+static void InitSnake(Snake* snake)
 {
     const int initSnakeSize = 4;
 
@@ -128,7 +128,7 @@ void InitSnake(Snake* snake)
 }
 
 // Moves the snake
-void UpdateSnake(Snake* snake, float deltaTime)
+static void UpdateSnake(Snake* snake, float deltaTime)
 {
     // Accumulate time
     snake->moveTimer += deltaTime; 
@@ -157,12 +157,12 @@ void UpdateSnake(Snake* snake, float deltaTime)
     }
 }
 
-void GrowSnake(Snake* snake) 
+static void GrowSnake(Snake* snake) 
 {
     int currentTailIndex = snake->length - 1;
     int newTailIndex = snake->length;
 
-    // Simply duplicate the current tail position
+    // duplicate the current tail position
     snake->bodyPart[newTailIndex].position.x = snake->bodyPart[currentTailIndex].position.x;
     snake->bodyPart[newTailIndex].position.y = snake->bodyPart[currentTailIndex].position.y;
 
@@ -197,7 +197,7 @@ void HandleSnakeInput(Snake* snake, InputAction input)
     }
 }
 
-bool CheckWallCollision(const Snake* snake)
+static bool CheckWallCollision(const Snake* snake)
 {
     const GridPosition head = snake->bodyPart[0].position;
 
@@ -205,7 +205,7 @@ bool CheckWallCollision(const Snake* snake)
         head.y == 0 || head.y == GRID_SIZE - 1);
 }
 
-bool CheckSelfCollision(const Snake* snake)
+static bool CheckSelfCollision(const Snake* snake)
 {
     const GridPosition head = snake->bodyPart[0].position;
 
@@ -218,7 +218,7 @@ bool CheckSelfCollision(const Snake* snake)
     return false;
 }
 
-void UpdateFood(GameState* gameState)
+static void UpdateFood(GameState* gameState)
 {
     int collision = 0;
 
@@ -250,14 +250,14 @@ void UpdateFood(GameState* gameState)
     } while (collision);
 }
 
-bool CheckFoodCollision(const Snake* snake, const Food* food)
+static bool CheckFoodCollision(const Snake* snake, const Food* food)
 {
     return (food->position.x == snake->bodyPart[0].position.x &&
         food->position.y == snake->bodyPart[0].position.y);
 }
 
 
-void HandleFoodEat(GameState* gameState) {
+static void HandleFoodEat(GameState* gameState) {
     PlayEatSound(gameState);
     GrowSnake(&gameState->snake);
     gameState->score += 5;
@@ -271,12 +271,13 @@ void HandleGameOver(GameState* gameState)
     gameState->isGameOver = true;
 }
 
-void GameLogic(GameState* gameState)
+static void GameLogic(GameState* gameState)
 {
     if (CheckFoodCollision(&gameState->snake, &gameState->food)) {
         HandleFoodEat(gameState);
     }
 
+    // game over if collide with wall or snakes self
     if (CheckWallCollision(&gameState->snake) ||
         CheckSelfCollision(&gameState->snake))
     {

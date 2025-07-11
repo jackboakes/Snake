@@ -3,7 +3,7 @@
 
 void InitAudio(GameState* gameState);
 void ShutdownAudio(GameState* gameState);
-void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound);
+static void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound);
 void PlayEatSound(GameState* gameState);
 void PlayCollisionSound(GameState* gameState);
 

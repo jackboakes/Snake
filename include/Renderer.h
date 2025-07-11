@@ -9,26 +9,19 @@
 #define TITLE_Y 200
 
 
-extern Color const snakeColour;
-
-Color const boardColors[2] = {
-    { 0x49, 0x43, 0x51, 0xFF },  // light
-    { 0x44, 0x3E, 0x4C, 0xFF }   // dark
-};
-
-
 // Resource management
 void LoadGameTextures();
 void UnloadGameTextures();
+void UpdateWindowIcon();
 
 // Individual draw functions
-void DrawGameBoard();
-void DrawGameUI(int score, int highScore);
-Rectangle GetHeadSpriteRect(Direction direction);
-void DrawSnake(const Snake* snake);
-void DrawFood(const Food* food);
+static void DrawGameBoard();
+static void DrawGameUI(int score, int highScore);
+static Rectangle GetHeadSpriteRect(Direction direction);
+static void DrawSnake(const Snake* snake);
+static void DrawFood(const Food* food);
 
-//rendering functions
+// Rendering functions
 void RenderMainMenu(int selectedOption);
 void RenderGameplay(GameManager* gameManager);
 void RenderGameOver(int selectedOption, int score, int highScore);

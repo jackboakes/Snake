@@ -2,6 +2,7 @@
 #include "GameManager.h"
 #include "Assets.h"
 
+
 // TODO: if you need more sounds refactor the master struct to store them in a vector
 void InitAudio(GameState* gameState)
 {
@@ -18,7 +19,7 @@ void ShutdownAudio(GameState* gameState)
 }
 
 // Helper function to reduce audio fatigue on repeated sounds
-void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound)
+static void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound)
 {
 	float pitch = GetRandomValue(lowerBound, upperBound) / 100.0f;
 	SetSoundPitch(sound, pitch);
