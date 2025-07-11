@@ -43,8 +43,10 @@ void UpdateWindowIcon()
     Image fullSnakeAtlas = LoadImageFromTexture(snakeAtlas);
     Rectangle iconSpriteRect = GetHeadSpriteRect(DIR_SOUTH);
     Image windowIcon = ImageFromImage(fullSnakeAtlas, iconSpriteRect);
+    UnloadImage(fullSnakeAtlas);
 
     SetWindowIcon(windowIcon);
+    UnloadImage(windowIcon);
 }
 
 static void DrawGameBoard()
