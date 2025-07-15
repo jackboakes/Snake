@@ -16,6 +16,21 @@ static Color const boardColors[2] = {
 
 static Texture2D snakeAtlas = { 0 };
 
+// Helper function to get a 32x32 sprite from the atlas by index
+static Rectangle GetSpriteRect(int col, int row) 
+{
+    Rectangle spriteRect;
+
+    spriteRect = {
+            (float) (col * TILE_SIZE),
+            (float) (row * TILE_SIZE),
+            TILE_SIZE,
+            TILE_SIZE
+    };
+
+    return  spriteRect;
+}
+
 void LoadGameTextures()
 {
     snakeAtlas = LoadTexture(GetAssetPath("snake_atlas.png"));
@@ -38,10 +53,11 @@ void UnloadGameTextures()
     }
 }
 
+// Sets the icon for the window using image from our atlas
 void UpdateWindowIcon()
 {
     Image fullSnakeAtlas = LoadImageFromTexture(snakeAtlas);
-    Rectangle iconSpriteRect = GetHeadSpriteRect(DIR_SOUTH);
+    Rectangle iconSpriteRect = GetSpriteRect(2, 0); // South facing head
     Image windowIcon = ImageFromImage(fullSnakeAtlas, iconSpriteRect);
     UnloadImage(fullSnakeAtlas);
 
@@ -91,22 +107,17 @@ static void DrawGameUI(int score, int highScore)
     DrawText(highScoreText, rightAlignedX, yPosition, fontSize, YELLOW);
 }
 
+// Returns the rectangle of the snakes head sprites based on direction of the snake
 static Rectangle GetHeadSpriteRect(Direction direction)
 {
-    int spriteIndex = 0;
-
     switch (direction)
     {
-    case DIR_NORTH: spriteIndex = 0; break;  // Position 0,0
-    case DIR_WEST:  spriteIndex = 1; break;  // Position 1,0
-    case DIR_SOUTH: spriteIndex = 2; break;  // Position 2,0
-    case DIR_EAST:  spriteIndex = 3; break;  // Position 3,0
-    default:        spriteIndex = 0; break;  // Default to north
+    case DIR_NORTH: return GetSpriteRect(0,0);  // head facing up
+    case DIR_WEST:  return GetSpriteRect(1, 0);  // head facing left
+    case DIR_SOUTH: return GetSpriteRect(2, 0);  // head facing down
+    case DIR_EAST:  return GetSpriteRect(3, 0);  // head facing right
+    default:        return GetSpriteRect(0, 0);  // default
     }
-
-    Rectangle rect = { (float)(spriteIndex * TILE_SIZE), (float)0, (float)TILE_SIZE, (float)TILE_SIZE };
-
-    return rect;
 }
 
 static void DrawSnake(const Snake* snake)
@@ -149,10 +160,8 @@ static void DrawFood(const Food* food)
 
     if (snakeAtlas.id > 0)
     {
-        Rectangle foodRect = { 0, 2 * TILE_SIZE, TILE_SIZE,TILE_SIZE };
-
-        Rectangle destRect = { (float)pixelX, (float)pixelY, (float)TILE_SIZE, (float)TILE_SIZE};
-
+        Rectangle foodRect = GetSpriteRect(0, 2);
+        Rectangle destRect = { (float)pixelX, (float)pixelY, (float)TILE_SIZE, (float)TILE_SIZE };
         DrawTexturePro(snakeAtlas, foodRect, destRect, { 0, 0 }, 0.0f, WHITE);
     }
     else

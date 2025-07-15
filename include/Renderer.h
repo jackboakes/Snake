@@ -10,9 +10,11 @@
 
 
 // Resource management
+static Rectangle GetSpriteRect(int col, int row);
 void LoadGameTextures();
 void UnloadGameTextures();
 void UpdateWindowIcon();
+
 
 // Individual draw functions
 static void DrawGameBoard();
