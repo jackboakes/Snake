@@ -170,46 +170,48 @@ static void DrawFood(const Food* food)
     }
 }
 
+static void Button(int posX, int posY, const char* text)
+{
+    const int buttonWidth = 32 * 9;
+    const int buttonHeight = 32 * 2;
+    const int borderWidth = 1;
+
+    const int fontSize = 25;
+    const int fontSpacing = fontSize / 10;
+    const int textWidth = MeasureTextEx(GetFontDefault(), text, fontSize, fontSpacing).x;
+    const int textHeight = MeasureTextEx(GetFontDefault(), text, fontSize, fontSpacing).y;
+    const int textPosX = posX - (textWidth / 2); // centres width
+    const int textPosY = posY - (textHeight / 2); // centres height
+
+    Rectangle rec = { 0 };
+    Rectangle buttonCollision = { posX, posY, buttonWidth, buttonHeight };
+
+    rec.x = posX - (buttonWidth / 2);
+    rec.y = posY - (buttonHeight / 2);
+    rec.width = buttonWidth;
+    rec.height = buttonHeight;
+
+    DrawRectangleRec(rec, BLACK);
+    DrawRectangleLinesEx(rec, borderWidth, WHITE);
+    DrawText(text, textPosX, textPosY, fontSize, WHITE);
+}
+
 void RenderMainMenu(int selectedOption)
 {
     const char* title = "SNAKE GAME";
     const char* options[] = { "Start Game", "Exit" };
     const int optionCount = sizeof(options) / sizeof(options[0]);
 
-    // Calculate positions
-    const int titleWidth = MeasureText(title, TITLE_FONT_SIZE);
-    const int titleX = (GetScreenWidth() - titleWidth) / 2;
+    const int buttonWidthCentre = GetScreenWidth() / 2;
+    const int buttonHeightCentre = GetScreenHeight() / 2;
 
     BeginDrawing();
 
     ClearBackground(backgroundColour);
 
-    DrawText(title, titleX, TITLE_Y, TITLE_FONT_SIZE, RAYWHITE);
+    Button(buttonWidthCentre, buttonHeightCentre, options[0]);
 
-    for (int i = 0; i < optionCount; i++)
-    {
-        int optionWidth = MeasureText(options[i], OPTION_FRONT_SIZE);
-        int optionX = (GetScreenWidth() - optionWidth) / 2;
-        int optionY = TITLE_Y + VERTICAL_SPACING + (i * VERTICAL_SPACING);
-
-        Color color;
-        if (i == selectedOption) 
-        {
-            color = YELLOW;
-        }
-        else 
-        {
-            color = RAYWHITE;
-        }
-
-        DrawText(options[i], optionX, optionY, OPTION_FRONT_SIZE, color);
-    }
-
-    // Draw instructions
-    const char* instructions = "Use UP/DOWN to navigate, ENTER to select";
-    int instrWidth = MeasureText(instructions, INSTRUCTION_FONT_SIZE);
-    int instrX = (GetScreenWidth() - instrWidth) / 2;
-    DrawText(instructions, instrX, TITLE_Y + VERTICAL_SPACING * 3, INSTRUCTION_FONT_SIZE, GRAY);
+    Button(buttonWidthCentre, buttonHeightCentre + 100, options[1]);
 
     EndDrawing();
 }

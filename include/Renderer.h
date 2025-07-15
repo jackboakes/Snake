@@ -22,6 +22,7 @@ static void DrawGameUI(int score, int highScore);
 static Rectangle GetHeadSpriteRect(Direction direction);
 static void DrawSnake(const Snake* snake);
 static void DrawFood(const Food* food);
+static void Button(int posX, int posY, const char* text);
 
 // Rendering functions
 void RenderMainMenu(int selectedOption);
