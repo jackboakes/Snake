@@ -2,7 +2,6 @@
 #include "GameManager.h"
 #include "Assets.h"
 
-
 // TODO: if you need more sounds refactor the master struct to store them in a vector
 void InitAudio(GameState* gameState)
 {

@@ -6,7 +6,6 @@
 #include "Game.h"
 #include "UI.h"
 
-
 // Used to control states
 struct GameManager
 {

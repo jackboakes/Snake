@@ -5,7 +5,6 @@
 #include "Types.h"
 #include "Audio.h"
 
-
 void InitDirectionQueue(DirectionQueue* queue)
 {
     queue->head = 0;

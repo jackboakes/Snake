@@ -5,7 +5,6 @@
 #include "Types.h"
 #include "Assets.h"
 
-
 static Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };
 static Color const borderColour = { 0x5A, 0x54, 0x62, 0xFF };
 static Color const backgroundColour = { 0x2D, 0x27, 0x2F, 0xFF };
@@ -13,7 +12,6 @@ static Color const boardColors[2] = {
     { 0x49, 0x43, 0x51, 0xFF },  // light
     { 0x44, 0x3E, 0x4C, 0xFF }   // dark
 };
-
 static Color const BUTTON_FACE_UP = { 0x5A, 0x54, 0x62, 0xFF }; // A mid-tone gray/purple
 static Color const BUTTON_FACE_HOVER = { 0x6C, 0x65, 0x73, 0xFF }; // A slightly lighter version
 static Color const BORDER_LIGHT = { 0x8C, 0x81, 0x93, 0xFF }; // Light edge
@@ -56,14 +54,6 @@ void UnloadGameTextures()
     {
         UnloadTexture(snakeAtlas);
     }
-}
-
-void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Color colour)
-{
-    Color const shadowColor = { 0, 0, 0, 128 };
-
-    DrawText(text, posX + 2, posY + 2, fontSize, shadowColor);
-    DrawText(text, posX, posY, fontSize, colour);
 }
 
 // Sets the icon for the window using image from our atlas
@@ -198,6 +188,14 @@ void DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColo
     DrawRectangleRec(bottom, darkColour);
     DrawRectangleRec(left, lightColour);
     DrawRectangleRec(right, darkColour);
+}
+
+void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Color colour)
+{
+    Color const shadowColor = { 0, 0, 0, 128 }; // black with half alpha
+
+    DrawText(text, posX + 2, posY + 2, fontSize, shadowColor);
+    DrawText(text, posX, posY, fontSize, colour);
 }
 
 void RenderGameplay(GameManager* gameManager)

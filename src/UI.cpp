@@ -1,6 +1,6 @@
 #include "raylib.h"
 #include "UI.h"
-#include <stdio.h>
+#include "Renderer.h"
 
 static const Color BUTTON_FACE_DEFAULT = { 0x40, 0x3A, 0x48, 0xFF };
 static const Color BUTTON_FACE_HOVER = { 0x6C, 0x65, 0x73, 0xFF };
@@ -153,26 +153,6 @@ void PositionButton(UI* ui, int buttonId, int x, int y, int width, int height)
             (float)x, (float)y, (float)width, (float)height
         };
     }
-}
-
-static void DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColour, Color darkColour)
-{
-    Rectangle top = { borderRec.x, borderRec.y, borderRec.width, borderThickness };
-    Rectangle bottom = { borderRec.x, borderRec.y + borderRec.height - borderThickness, borderRec.width, borderThickness };
-    Rectangle left = { borderRec.x, borderRec.y + borderThickness, borderThickness, borderRec.height - (2 * borderThickness) };
-    Rectangle right = { borderRec.x + borderRec.width - borderThickness, borderRec.y + borderThickness, borderThickness, borderRec.height - (2 * borderThickness) };
-
-    DrawRectangleRec(top, lightColour);
-    DrawRectangleRec(bottom, darkColour);
-    DrawRectangleRec(left, lightColour);
-    DrawRectangleRec(right, darkColour);
-}
-
-static void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Color colour)
-{
-    Color const shadowColor = { 0, 0, 0, 128 };
-    DrawText(text, posX + 2, posY + 2, fontSize, shadowColor);
-    DrawText(text, posX, posY, fontSize, colour);
 }
 
 void RenderButton(const Button* button)

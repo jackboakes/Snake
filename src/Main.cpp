@@ -4,7 +4,6 @@
 #define SCREEN_WIDTH 768
 #define SCREEN_HEIGHT 768
 
-
 int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");

@@ -1,20 +1,19 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include "Game.h"
+
 // Menu global constants
 #define TITLE_FONT_SIZE 40
 #define OPTION_FRONT_SIZE 30
 #define INSTRUCTION_FONT_SIZE 20
 #define VERTICAL_SPACING 50
-#define TITLE_Y 200
 
 // Resource management
 static Rectangle GetSpriteRect(int col, int row);
 void LoadGameTextures();
 void UnloadGameTextures();
 void UpdateWindowIcon();
-
-
 
 // Individual draw functions
 static void DrawGameBoard();

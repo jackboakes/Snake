@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "Score.h"
 
-
 int LoadHighScore(void)
 {
     int highScore = 0;

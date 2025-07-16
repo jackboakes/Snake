@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "Assets.h"
 
-
 // Constructs the full path to the asset file by combining the .exe directory
 // with a path to the asset folder.
 // Utilises GetApplicationDirectory() from raylib and traverses up two folder levels to root.
