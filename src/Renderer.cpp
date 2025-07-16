@@ -14,6 +14,11 @@ static Color const boardColors[2] = {
     { 0x44, 0x3E, 0x4C, 0xFF }   // dark
 };
 
+static Color const BUTTON_FACE_UP = { 0x5A, 0x54, 0x62, 0xFF }; // A mid-tone gray/purple
+static Color const BUTTON_FACE_HOVER = { 0x6C, 0x65, 0x73, 0xFF }; // A slightly lighter version
+static Color const BORDER_LIGHT = { 0x8C, 0x81, 0x93, 0xFF }; // Light edge
+static Color const BORDER_DARK = { 0x3E, 0x35, 0x42, 0xFF }; // Dark edge
+
 static Texture2D snakeAtlas = { 0 };
 
 // Helper function to get a 32x32 sprite from the atlas by index
@@ -53,6 +58,14 @@ void UnloadGameTextures()
     }
 }
 
+void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Color colour)
+{
+    Color const shadowColor = { 0, 0, 0, 128 };
+
+    DrawText(text, posX + 2, posY + 2, fontSize, shadowColor);
+    DrawText(text, posX, posY, fontSize, colour);
+}
+
 // Sets the icon for the window using image from our atlas
 void UpdateWindowIcon()
 {
@@ -81,13 +94,14 @@ static void DrawGameBoard()
         }
     }
     Rectangle borderRect = {
-          GAME_OFFSET - 5,
-          GAME_OFFSET - 5,
-          GAME_WIDTH + 10,
-          GAME_HEIGHT + 10
+          GAME_OFFSET - borderThickness,
+          GAME_OFFSET - borderThickness,
+          GAME_WIDTH + (borderThickness * 2.0f),
+          GAME_HEIGHT + (borderThickness * 2.0f)
     };
 
-    DrawRectangleLinesEx(borderRect, borderThickness, borderColour);
+    //DrawRectangleLinesEx(borderRect, borderThickness, borderColour);
+    DrawBeveledBorder(borderRect, borderThickness, borderColour, BORDER_DARK);
 }
 
 static void DrawGameUI(int score, int highScore)
@@ -170,51 +184,96 @@ static void DrawFood(const Food* food)
     }
 }
 
-static void Button(int posX, int posY, const char* text)
+// Handles input logic for the button
+ButtonState UpdateButton(Rectangle buttonBounds)
 {
-    const int buttonWidth = 32 * 9;
-    const int buttonHeight = 32 * 2;
-    const int borderWidth = 1;
+    ButtonState buttonState = { 0 };
+    Vector2 mousePos = GetMousePosition();
 
+    buttonState.isHovered = CheckCollisionPointRec(mousePos, buttonBounds);
+
+    if (buttonState.isHovered)
+    {
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+        {
+            buttonState.isClicked = true;
+        }
+    }
+
+    return buttonState;
+}
+
+
+// Refactors raylib.h DrawRectangleLinesEx to take in two colours and create a bevel
+// with a light colour in the top and left border, and darker in the bottom and right
+void DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColour, Color darkColour)
+{
+    Rectangle top = { borderRec.x, borderRec.y, borderRec.width, borderThickness };
+    Rectangle bottom = { borderRec.x, borderRec.y + borderRec.height - borderThickness, borderRec.width, borderThickness };
+    Rectangle left = { borderRec.x, borderRec.y + borderThickness, borderThickness, borderRec.height - (2 * borderThickness) };
+    Rectangle right = { borderRec.x + borderRec.width - borderThickness, borderRec.y + borderThickness, borderThickness, borderRec.height - (2 * borderThickness) };
+
+    DrawRectangleRec(top, lightColour);
+    DrawRectangleRec(bottom, darkColour);
+    DrawRectangleRec(left, lightColour);
+    DrawRectangleRec(right, darkColour);
+}
+
+// Handles all drawing for button
+void RenderButton(Rectangle buttonBounds, const char* text, ButtonState buttonState)
+{
+    const int borderWidth = 5;
     const int fontSize = 25;
     const int fontSpacing = fontSize / 10;
+
     const int textWidth = MeasureTextEx(GetFontDefault(), text, fontSize, fontSpacing).x;
     const int textHeight = MeasureTextEx(GetFontDefault(), text, fontSize, fontSpacing).y;
-    const int textPosX = posX - (textWidth / 2); // centres width
-    const int textPosY = posY - (textHeight / 2); // centres height
+    const int textPosX = buttonBounds.x + (buttonBounds.width - textWidth) / 2; // centres width
+    const int textPosY = buttonBounds.y + (buttonBounds.height - textHeight) / 2; // centres height
 
-    Rectangle rec = { 0 };
-    Rectangle buttonCollision = { posX, posY, buttonWidth, buttonHeight };
+    Color buttonColour;
+    if (buttonState.isHovered)
+    {
+        buttonColour = BUTTON_FACE_HOVER;
+    }
+    else
+    {
+        buttonColour = BUTTON_FACE_UP;
+    }
 
-    rec.x = posX - (buttonWidth / 2);
-    rec.y = posY - (buttonHeight / 2);
-    rec.width = buttonWidth;
-    rec.height = buttonHeight;
+    DrawRectangleRec(buttonBounds, buttonColour);
 
-    DrawRectangleRec(rec, BLACK);
-    DrawRectangleLinesEx(rec, borderWidth, WHITE);
-    DrawText(text, textPosX, textPosY, fontSize, WHITE);
+    if (buttonState.isHovered && IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+    {
+        // Invert the light source, move text and remove text shadow for a pressed in look
+        DrawBeveledBorder(buttonBounds, borderWidth, BORDER_DARK, BORDER_LIGHT);
+        DrawText(text, textPosX + 2, textPosY + 2, fontSize, WHITE);
+    }
+    else
+    {
+        // Standard top left light source look
+        DrawBeveledBorder(buttonBounds, borderWidth, BORDER_LIGHT, BORDER_DARK);
+        DrawTextWithShadow(text, textPosX, textPosY, fontSize, WHITE);
+    }
+
 }
 
-void RenderMainMenu(int selectedOption)
-{
-    const char* title = "SNAKE GAME";
-    const char* options[] = { "Start Game", "Exit" };
-    const int optionCount = sizeof(options) / sizeof(options[0]);
-
-    const int buttonWidthCentre = GetScreenWidth() / 2;
-    const int buttonHeightCentre = GetScreenHeight() / 2;
-
-    BeginDrawing();
-
-    ClearBackground(backgroundColour);
-
-    Button(buttonWidthCentre, buttonHeightCentre, options[0]);
-
-    Button(buttonWidthCentre, buttonHeightCentre + 100, options[1]);
-
-    EndDrawing();
-}
+//void RenderMainMenu()
+//{
+//    const char* title = "SNAKE GAME";
+//    const char* options[] = { "Start Game", "Quit" };
+//    const int optionCount = sizeof(options) / sizeof(options[0]);
+//
+//    const int buttonWidthCentre = GetScreenWidth() / 2;
+//    const int buttonHeightCentre = GetScreenHeight() / 2;
+//
+//    BeginDrawing();
+//
+//    ClearBackground(backgroundColour);
+//
+//
+//    EndDrawing();
+//}
 
 void RenderGameplay(GameManager* gameManager)
 {

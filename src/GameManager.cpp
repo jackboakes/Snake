@@ -96,30 +96,64 @@ static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID
 
 static void UpdateMainMenu(GameManager* gameManager)
 {
-    // Input
-    InputAction input = ReadMenuInput();
+    const int buttonWidth = 32 * 9;
+    const int buttonHeight = 32 * 2;
+    const int buttonPadding = 32;
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
 
-    // Update
-    if (input == INPUT_UP && gameManager->selectedMenuOption > MAIN_MENU_START) 
+    const char* mainMenuOptions[] = { "Start Game", "Quit" };
+    const int mainMenuOptionCount = sizeof(mainMenuOptions) / sizeof(mainMenuOptions[0]);
+
+    const int totalButtonsHeight = (mainMenuOptionCount * buttonHeight) + ((mainMenuOptionCount - 1) * buttonPadding);
+
+    const int startY = (screenHeight / 2) - (totalButtonsHeight / 2);
+
+    Rectangle buttonBounds[mainMenuOptionCount];
+    ButtonState buttonStates[mainMenuOptionCount];
+
+    for (int i = 0; i < mainMenuOptionCount; i++)
     {
-        gameManager->selectedMenuOption--;
-    }
-    else if (input == INPUT_DOWN && gameManager->selectedMenuOption < (MAIN_MENU_OPTION_COUNT -1 )) 
-    { 
-        gameManager->selectedMenuOption++;
+        buttonBounds[i] = {
+            (screenWidth / 2.0f) - (buttonWidth / 2.0f),  // Centered horizontally
+            (float)startY + (i * (buttonHeight + buttonPadding)), // Distributed vertically
+            buttonWidth,
+            buttonHeight
+        };
+
+        // Update button state
+        buttonStates[i] = UpdateButton(buttonBounds[i]);
     }
 
-    if (input == INPUT_SELECT && gameManager->selectedMenuOption == MAIN_MENU_START)
+    // magic numbers use enum if u stick with this
+    if (buttonStates[0].isClicked)
     {
-        gameManager->nextState = STATE_PLAYING; // Start game if Enter on "Start Game"
+        gameManager->nextState = STATE_PLAYING;
     }
-    else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == MAIN_MENU_EXIT))
+
+    if (buttonStates[1].isClicked)
     {
-        gameManager->nextState = STATE_QUIT; // Quit if Enter on "Exit"
+        gameManager->nextState = STATE_QUIT;
     }
 
     // Render
-    RenderMainMenu(gameManager->selectedMenuOption);
+    Color backgroundColour = { 0x2D, 0x27, 0x2F, 0xFF };
+    const char* title = "SNAKE GAME";
+    const int titleFontSize = 40;
+    const int titleFontSpacing = titleFontSize / 10;
+    const int titleWidth = MeasureTextEx(GetFontDefault(), title, titleFontSize, titleFontSpacing).x;
+    const int titlePosX = (screenWidth / 2) - (titleWidth / 2);
+
+
+    BeginDrawing();
+    ClearBackground(backgroundColour);
+    DrawText(title, titlePosX, 50, titleFontSize, WHITE);
+    for (int i = 0; i < mainMenuOptionCount; i++)
+    {
+        RenderButton(buttonBounds[i], mainMenuOptions[i], buttonStates[i]);
+    }
+
+    EndDrawing();
 }
 
 static void UpdateGameplay(GameManager* gameManager)
