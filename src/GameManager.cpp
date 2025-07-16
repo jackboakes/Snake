@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Renderer.h"
 #include "Audio.h"
+#include "UI.h"
 
 enum MainMenuOption
 {
@@ -26,11 +27,14 @@ void InitGameManager(GameManager* gameManager)
     gameManager->shouldQuit = false;
     gameManager->currentState = STATE_MAIN_MENU; 
     gameManager->nextState = STATE_MAIN_MENU;
-    gameManager->selectedMenuOption = 0;
 
     InitAudio(&gameManager->gameState);
     LoadGameTextures();
     UpdateWindowIcon();
+
+    // init ui
+    InitMainMenuUI(&gameManager->mainMenuUI);
+    InitGameOverUI(&gameManager->gameOverUI);
 }
 
 void ShutdownGameManager(GameManager* gameManager)
@@ -79,13 +83,13 @@ static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID
     switch (newStateID)
     {
     case STATE_MAIN_MENU:
-        gameManager->selectedMenuOption = 0;
+        InitMainMenuUI(&gameManager->mainMenuUI);
         break;
     case STATE_PLAYING:
         InitGame(&gameManager->gameState);
         break;
     case STATE_GAME_OVER:
-        gameManager->selectedMenuOption = 0;
+        InitGameOverUI(&gameManager->gameOverUI);
         break;
     case STATE_QUIT:
         gameManager->shouldQuit = true;
@@ -96,42 +100,15 @@ static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID
 
 static void UpdateMainMenu(GameManager* gameManager)
 {
-    const int buttonWidth = 32 * 9;
-    const int buttonHeight = 32 * 2;
-    const int buttonPadding = 32;
-    const int screenWidth = GetScreenWidth();
-    const int screenHeight = GetScreenHeight();
+    UpdateUI(&gameManager->mainMenuUI);
 
-    const char* mainMenuOptions[] = { "Start Game", "Quit" };
-    const int mainMenuOptionCount = sizeof(mainMenuOptions) / sizeof(mainMenuOptions[0]);
-
-    const int totalButtonsHeight = (mainMenuOptionCount * buttonHeight) + ((mainMenuOptionCount - 1) * buttonPadding);
-
-    const int startY = (screenHeight / 2) - (totalButtonsHeight / 2);
-
-    Rectangle buttonBounds[mainMenuOptionCount];
-    ButtonState buttonStates[mainMenuOptionCount];
-
-    for (int i = 0; i < mainMenuOptionCount; i++)
-    {
-        buttonBounds[i] = {
-            (screenWidth / 2.0f) - (buttonWidth / 2.0f),  // Centered horizontally
-            (float)startY + (i * (buttonHeight + buttonPadding)), // Distributed vertically
-            buttonWidth,
-            buttonHeight
-        };
-
-        // Update button state
-        buttonStates[i] = UpdateButton(buttonBounds[i]);
-    }
-
-    // magic numbers use enum if u stick with this
-    if (buttonStates[0].isClicked)
+    
+    if (IsButtonActive(&gameManager->mainMenuUI, 1) && GetButton(&gameManager->mainMenuUI, 1)->isReleased == true)
     {
         gameManager->nextState = STATE_PLAYING;
     }
 
-    if (buttonStates[1].isClicked)
+    if (IsButtonActive(&gameManager->mainMenuUI, 2) && GetButton(&gameManager->mainMenuUI, 2)->isReleased == true)
     {
         gameManager->nextState = STATE_QUIT;
     }
@@ -142,17 +119,13 @@ static void UpdateMainMenu(GameManager* gameManager)
     const int titleFontSize = 40;
     const int titleFontSpacing = titleFontSize / 10;
     const int titleWidth = MeasureTextEx(GetFontDefault(), title, titleFontSize, titleFontSpacing).x;
-    const int titlePosX = (screenWidth / 2) - (titleWidth / 2);
-
+    const int titlePosX = (GetScreenWidth() / 2) - (titleWidth / 2);
+    const int titlePosY = 250;
 
     BeginDrawing();
     ClearBackground(backgroundColour);
-    DrawText(title, titlePosX, 50, titleFontSize, WHITE);
-    for (int i = 0; i < mainMenuOptionCount; i++)
-    {
-        RenderButton(buttonBounds[i], mainMenuOptions[i], buttonStates[i]);
-    }
-
+    DrawTextWithShadow(title, titlePosX, titlePosY, titleFontSize, RED);
+    RenderUI(&gameManager->mainMenuUI);
     EndDrawing();
 }
 
@@ -179,35 +152,46 @@ static void UpdateGameplay(GameManager* gameManager)
 
 static void UpdateGameOver(GameManager* gameManager)
 {
-    // Input
-    InputAction input = ReadMenuInput();
+    UpdateUI(&gameManager->gameOverUI);
 
-    // Update
-    if (input == INPUT_UP && gameManager->selectedMenuOption > GAME_OVER_MAIN_MENU) 
+
+    if (IsButtonActive(&gameManager->gameOverUI, 1) && GetButton(&gameManager->gameOverUI, 1)->isReleased == true)
     {
-        gameManager->selectedMenuOption--;
-    }
-    else if (input == INPUT_DOWN && gameManager->selectedMenuOption < (GAME_OVER_OPTION_COUNT - 1)) 
-    {
-        gameManager->selectedMenuOption++;
+        gameManager->nextState = STATE_MAIN_MENU;
     }
 
-    if (input == INPUT_SELECT && gameManager->selectedMenuOption == GAME_OVER_MAIN_MENU)
+    if (IsButtonActive(&gameManager->gameOverUI, 2) && GetButton(&gameManager->gameOverUI, 2)->isReleased == true)
     {
-        InitGame(&gameManager->gameState); 
-        gameManager->nextState = STATE_MAIN_MENU; 
+        gameManager->nextState = STATE_PLAYING;
     }
-    else if (input == INPUT_SELECT && gameManager->selectedMenuOption == GAME_OVER_RESTART) 
-    {
-        InitGame(&gameManager->gameState);
-        gameManager->nextState = STATE_PLAYING; 
-    }
-    else if (input == INPUT_QUIT || (input == INPUT_SELECT && gameManager->selectedMenuOption == GAME_OVER_EXIT))
+
+    if (IsButtonActive(&gameManager->gameOverUI, 3) && GetButton(&gameManager->gameOverUI, 3)->isReleased == true)
     {
         gameManager->nextState = STATE_QUIT;
     }
 
-
     // Render
-    RenderGameOver(gameManager->selectedMenuOption, gameManager->gameState.score, gameManager->gameState.highScore);
+    Color backgroundColour = { 0x2D, 0x27, 0x2F, 0xFF };
+    const char* title = "GAME OVER";
+    const int scoreFontSize = 25;
+    const int screenWidth = GetScreenWidth();
+    const int titleWidth = MeasureText(title, 40);
+    const int titleX = (screenWidth - titleWidth) / 2;
+
+    BeginDrawing();
+    ClearBackground(backgroundColour);
+    DrawTextWithShadow(title, titleX, 150, 40, RED);
+
+    // Draw scores
+    const char* scoreText = TextFormat("Final Score: %d", gameManager->gameState.score);
+    const char* highScoreText = TextFormat("High Score: %d", gameManager->gameState.highScore);
+
+    int scoreWidth = MeasureText(scoreText, scoreFontSize);
+    int highScoreWidth = MeasureText(highScoreText, scoreFontSize);
+
+    DrawTextWithShadow(scoreText, (screenWidth - scoreWidth) / 2, 200, scoreFontSize, RAYWHITE);
+    DrawTextWithShadow(highScoreText, (screenWidth - highScoreWidth) / 2, 230, scoreFontSize, YELLOW);
+
+    RenderUI(&gameManager->gameOverUI);
+    EndDrawing();
 }

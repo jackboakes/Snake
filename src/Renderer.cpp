@@ -184,25 +184,6 @@ static void DrawFood(const Food* food)
     }
 }
 
-// Handles input logic for the button
-ButtonState UpdateButton(Rectangle buttonBounds)
-{
-    ButtonState buttonState = { 0 };
-    Vector2 mousePos = GetMousePosition();
-
-    buttonState.isHovered = CheckCollisionPointRec(mousePos, buttonBounds);
-
-    if (buttonState.isHovered)
-    {
-        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-        {
-            buttonState.isClicked = true;
-        }
-    }
-
-    return buttonState;
-}
-
 
 // Refactors raylib.h DrawRectangleLinesEx to take in two colours and create a bevel
 // with a light colour in the top and left border, and darker in the bottom and right
@@ -219,62 +200,6 @@ void DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColo
     DrawRectangleRec(right, darkColour);
 }
 
-// Handles all drawing for button
-void RenderButton(Rectangle buttonBounds, const char* text, ButtonState buttonState)
-{
-    const int borderWidth = 5;
-    const int fontSize = 25;
-    const int fontSpacing = fontSize / 10;
-
-    const int textWidth = MeasureTextEx(GetFontDefault(), text, fontSize, fontSpacing).x;
-    const int textHeight = MeasureTextEx(GetFontDefault(), text, fontSize, fontSpacing).y;
-    const int textPosX = buttonBounds.x + (buttonBounds.width - textWidth) / 2; // centres width
-    const int textPosY = buttonBounds.y + (buttonBounds.height - textHeight) / 2; // centres height
-
-    Color buttonColour;
-    if (buttonState.isHovered)
-    {
-        buttonColour = BUTTON_FACE_HOVER;
-    }
-    else
-    {
-        buttonColour = BUTTON_FACE_UP;
-    }
-
-    DrawRectangleRec(buttonBounds, buttonColour);
-
-    if (buttonState.isHovered && IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-    {
-        // Invert the light source, move text and remove text shadow for a pressed in look
-        DrawBeveledBorder(buttonBounds, borderWidth, BORDER_DARK, BORDER_LIGHT);
-        DrawText(text, textPosX + 2, textPosY + 2, fontSize, WHITE);
-    }
-    else
-    {
-        // Standard top left light source look
-        DrawBeveledBorder(buttonBounds, borderWidth, BORDER_LIGHT, BORDER_DARK);
-        DrawTextWithShadow(text, textPosX, textPosY, fontSize, WHITE);
-    }
-
-}
-
-//void RenderMainMenu()
-//{
-//    const char* title = "SNAKE GAME";
-//    const char* options[] = { "Start Game", "Quit" };
-//    const int optionCount = sizeof(options) / sizeof(options[0]);
-//
-//    const int buttonWidthCentre = GetScreenWidth() / 2;
-//    const int buttonHeightCentre = GetScreenHeight() / 2;
-//
-//    BeginDrawing();
-//
-//    ClearBackground(backgroundColour);
-//
-//
-//    EndDrawing();
-//}
-
 void RenderGameplay(GameManager* gameManager)
 {
     BeginDrawing();
@@ -283,58 +208,5 @@ void RenderGameplay(GameManager* gameManager)
     DrawSnake(&gameManager->gameState.snake);
     DrawFood(&gameManager->gameState.food);
     DrawGameUI(gameManager->gameState.score, gameManager->gameState.highScore);
-    EndDrawing();
-}
-
-
-
-void RenderGameOver(int selectedOption, int score, int highScore)
-{
-    const int scoreFontSize = 25;
-    const char* title = "GAME OVER";
-    const char* options[] = { "Main Menu", "Restart", "Quit" };
-    const int optionCount = sizeof(options) / sizeof(options[0]);
-    // Calculate positions
-    const int titleWidth = MeasureText(title, TITLE_FONT_SIZE);
-    const int titleX = (GetScreenWidth() - titleWidth) / 2;
-
-    BeginDrawing();
-
-    ClearBackground(backgroundColour);
-    DrawText(title, titleX, TITLE_Y, TITLE_FONT_SIZE, RED);
-
-    // Draw scores
-    const char* scoreText = TextFormat("Final Score: %d", score);
-    const char* highScoreText = TextFormat("High Score: %d", highScore);
-
-    int scoreWidth = MeasureText(scoreText, scoreFontSize);
-    int highScoreWidth = MeasureText(highScoreText, scoreFontSize);
-
-    DrawText(scoreText, (GetScreenWidth() - scoreWidth) / 2, TITLE_Y + 50, scoreFontSize, RAYWHITE);
-    DrawText(highScoreText, (GetScreenWidth() - highScoreWidth) / 2, TITLE_Y + 80, scoreFontSize, YELLOW);
-
-    // Draw menu options
-    for (int i = 0; i < optionCount; i++)
-    {
-        int optionWidth = MeasureText(options[i], OPTION_FRONT_SIZE);
-        int optionX = (GetScreenWidth() - optionWidth) / 2;
-        int optionY = TITLE_Y + 150 + (i * VERTICAL_SPACING);
-
-        Color color;
-        if (i == selectedOption) {
-            color = YELLOW;
-        }
-        else {
-            color = RAYWHITE;
-        }
-        DrawText(options[i], optionX, optionY, OPTION_FRONT_SIZE, color);
-    }
-
-    // Draw instructions
-    const char* instructions = "Use UP/DOWN to navigate, ENTER to select";
-    int instrWidth = MeasureText(instructions, INSTRUCTION_FONT_SIZE);
-    int instrX = (GetScreenWidth() - instrWidth) / 2;
-    DrawText(instructions, instrX, TITLE_Y + 150 + (optionCount * VERTICAL_SPACING), INSTRUCTION_FONT_SIZE, GRAY);
-
     EndDrawing();
 }

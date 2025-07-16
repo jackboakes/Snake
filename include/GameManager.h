@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include "Types.h"
 #include "Game.h"
+#include "UI.h"
 
 
 // Used to control states
@@ -12,10 +13,13 @@ struct GameManager
     GameStateID currentState;
     GameStateID nextState;
     bool shouldQuit;
-    int selectedMenuOption;
 
     // Game Data
     GameState gameState;
+
+    // UI Data
+    UI mainMenuUI;
+    UI gameOverUI;
 };
 
 
