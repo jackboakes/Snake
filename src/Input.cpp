@@ -1,28 +1,6 @@
 #include "raylib.h"
 #include "Input.h"
 
-InputAction ReadMenuInput()
-{
-	if (IsKeyPressed(KEY_W))
-	{
-		return INPUT_UP;
-	}
-
-	if (IsKeyPressed(KEY_S))
-	{
-		return INPUT_DOWN;
-	}
-
-	if (IsKeyPressed(KEY_ENTER)) {
-		return INPUT_SELECT;
-	}
-
-	if (IsKeyPressed(KEY_ESCAPE)) {
-		return INPUT_QUIT;
-	}
-
-	return INPUT_NONE;
-}
 
 InputAction ReadGameInput()
 {

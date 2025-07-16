@@ -83,6 +83,7 @@ static void DrawGameBoard()
             DrawRectangle(posX, posY, TILE_SIZE, TILE_SIZE, tileColor);
         }
     }
+
     Rectangle borderRect = {
           GAME_OFFSET - borderThickness,
           GAME_OFFSET - borderThickness,
@@ -90,7 +91,6 @@ static void DrawGameBoard()
           GAME_HEIGHT + (borderThickness * 2.0f)
     };
 
-    //DrawRectangleLinesEx(borderRect, borderThickness, borderColour);
     DrawBeveledBorder(borderRect, borderThickness, borderColour, BORDER_DARK);
 }
 
@@ -107,8 +107,8 @@ static void DrawGameUI(int score, int highScore)
     int rightEdge = GAME_OFFSET + GAME_WIDTH + 5; // Right edge of game area plus margin
     int rightAlignedX = rightEdge - highScoreTextWidth;
 
-    DrawText(currentScoreText, leftEdge, yPosition, fontSize, RAYWHITE);
-    DrawText(highScoreText, rightAlignedX, yPosition, fontSize, YELLOW);
+    DrawTextWithShadow(currentScoreText, leftEdge, yPosition, fontSize, RAYWHITE);
+    DrawTextWithShadow(highScoreText, rightAlignedX, yPosition, fontSize, YELLOW);
 }
 
 // Returns the rectangle of the snakes head sprites based on direction of the snake

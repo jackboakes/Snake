@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "UI.h"
 #include "Renderer.h"
+#include "Audio.h"
 
 static const Color BUTTON_FACE_DEFAULT = { 0x40, 0x3A, 0x48, 0xFF };
 static const Color BUTTON_FACE_HOVER = { 0x6C, 0x65, 0x73, 0xFF };
@@ -10,7 +11,11 @@ static const Color BORDER_DARK = { 0x3E, 0x35, 0x42, 0xFF };
 
 void InitMainMenuUI(UI* ui)
 {
-    *ui = { 0 };
+    ui->buttonCount = 0;
+    ui->mousePos = { 0, 0 };
+    ui->mouseButtonDown = false;
+    ui->mouseButtonReleased = false;
+    ui->activeButtonID = 0;
 
     const int buttonWidth = 32 * 9;
     const int buttonHeight = 32 * 2;
@@ -28,7 +33,11 @@ void InitMainMenuUI(UI* ui)
 
 void InitGameOverUI(UI* ui)
 {
-    *ui = { 0 };
+    ui->buttonCount = 0;
+    ui->mousePos = { 0, 0 };
+    ui->mouseButtonDown = false;
+    ui->mouseButtonReleased = false;
+    ui->activeButtonID = 0;
 
     const int buttonWidth = 32 * 9;
     const int buttonHeight = 32 * 2;
@@ -68,11 +77,13 @@ void UpdateUI(UI* ui)
 
             if (ui->mouseButtonDown)
             {
+
                 button->isPressed = true;
             }
 
             if (ui->mouseButtonReleased)
             {
+                PlayButtonSound(ui->buttonSound);
                 button->isReleased = true;
             }
         }

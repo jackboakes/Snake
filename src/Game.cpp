@@ -107,7 +107,6 @@ static void InitSnake(Snake* snake)
     // Snake spawns left and centre of game area
     const int leftX = initSnakeSize + 1;
     const int halfY = GRID_SIZE / 2;
-    GridPosition startPos = { leftX,  halfY };
 
     snake->length = initSnakeSize;
     snake->currentDirection = DIR_EAST;
@@ -116,8 +115,6 @@ static void InitSnake(Snake* snake)
 
     InitDirectionQueue(&snake->directionQueue);
 
-    snake->bodyPart[0].position.x = startPos.x;
-    snake->bodyPart[0].position.y = startPos.y;
 
     for (int i = 0; i < initSnakeSize; i++)
     {

@@ -22,6 +22,8 @@ struct UI
 	bool mouseButtonDown;
 	bool mouseButtonReleased;
 	int activeButtonID;
+
+	Sound buttonSound;
 };
 
 void InitMainMenuUI(UI* ui);

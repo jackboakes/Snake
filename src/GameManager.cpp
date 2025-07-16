@@ -28,7 +28,7 @@ void InitGameManager(GameManager* gameManager)
     gameManager->currentState = STATE_MAIN_MENU; 
     gameManager->nextState = STATE_MAIN_MENU;
 
-    InitAudio(&gameManager->gameState);
+    InitAudio(gameManager);
     LoadGameTextures();
     UpdateWindowIcon();
 
@@ -40,7 +40,7 @@ void InitGameManager(GameManager* gameManager)
 void ShutdownGameManager(GameManager* gameManager)
 {
     UnloadGameTextures();
-    ShutdownAudio(&gameManager->gameState);
+    ShutdownAudio(gameManager);
     CloseWindow();
 }
 
