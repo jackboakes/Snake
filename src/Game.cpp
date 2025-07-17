@@ -81,6 +81,7 @@ static void UpdateSnake(Snake* snake, float deltaTime)
 
 static void GrowSnake(Snake* snake) 
 {
+    if (snake->length >= SNAKE_MAX_LEN) return;
     int currentTailIndex = snake->length - 1;
     int newTailIndex = snake->length;
 

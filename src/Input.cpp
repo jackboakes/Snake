@@ -41,7 +41,6 @@ bool DirectionQueueEmpty(DirectionQueue* queue)
 
 bool DirectionQueueFull(DirectionQueue* queue)
 {
-
     return (queue->count >= INPUT_QUEUE_SIZE);
 }
 
@@ -49,13 +48,13 @@ bool EnqueueDirection(DirectionQueue* queue, Direction dir)
 {
     if (DirectionQueueFull(queue))
     {
-        return 0;
+        return false;
     }
     queue->dirValues[queue->tail] = dir;
     queue->count++;
     queue->tail = (queue->tail + 1) % INPUT_QUEUE_SIZE; // wrap
 
-    return 1;
+    return true;
 }
 
 Direction DequeueDirection(DirectionQueue* queue)

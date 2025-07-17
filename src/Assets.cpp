@@ -40,6 +40,7 @@ void UnloadGameTextures()
 void UpdateWindowIcon(int tileSize)
 {
     Image fullSnakeAtlas = LoadImageFromTexture(snakeAtlas);
+    if (!fullSnakeAtlas.data) return;
     Rectangle iconSpriteRect = GetSpriteRect(2, 0, tileSize); // South facing head
     Image windowIcon = ImageFromImage(fullSnakeAtlas, iconSpriteRect);
     UnloadImage(fullSnakeAtlas);

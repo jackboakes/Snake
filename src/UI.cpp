@@ -100,6 +100,8 @@ void AddButton(UI* ui, Rectangle bounds, const char* text, int id)
     button->id = id;
     button->bounds = bounds;
     button->text = text;
+    button->isHovered = false;
+    button->isPressed = false;
 }
 
 bool IsButtonActive(const UI* ui, int buttonId)
