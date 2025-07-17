@@ -1,20 +1,24 @@
 #include "raylib.h"
-#include "GameManager.h"
-#include "Assets.h"
+#include "Audio.h"
+#include "Assets.h" // get asset path helper
 
 
-// TODO: if you need more sounds refactor the master struct to store them in a vector
-void InitAudio(GameState* gameState)
+
+void InitAudio(Sound audioSFX[])
 {
 	InitAudioDevice();
-	gameState->eatSound = LoadSound(GetAssetPath("sfx_snake_eat.wav"));
-	gameState->collisionSound = LoadSound(GetAssetPath("sfx_snake_collision.wav"));
+
+	audioSFX[SFX_EAT] = LoadSound(GetAssetPath("sfx_snake_eat.wav"));
+	audioSFX[SFX_COLLISION] = LoadSound(GetAssetPath("sfx_snake_collision.wav"));
+	audioSFX[SFX_MENU_BUTTON] = LoadSound(GetAssetPath("sfx_menu_button_pressed.wav"));
 }
 
-void ShutdownAudio(GameState* gameState)
+void ShutdownAudio(Sound audioSFX[])
 {
-	UnloadSound(gameState->collisionSound);
-	UnloadSound(gameState->eatSound);
+	for (int i = 0; i < SFX_COUNT; i++)
+	{
+		UnloadSound(audioSFX[i]);
+	}
 	CloseAudioDevice();
 }
 
@@ -25,19 +29,12 @@ static void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound)
 	SetSoundPitch(sound, pitch);
 }
 
-void PlayEatSound(GameState* gameState)
+// Plays a sound with a pitch between 95 and 105 to reduce audio fatigue on repeated sounds
+void PlaySoundRandomisedPitch(Sound sound)
 {
 	const int lowerPitch = 95;
 	const int higherPitch = 105;
-	RandomiseSoundPitch(lowerPitch, higherPitch, gameState->eatSound);
-	PlaySound(gameState->eatSound);
-}
-
-void PlayCollisionSound(GameState* gameState)
-{
-	const int lowerPitch = 95;
-	const int higherPitch = 105;
-	RandomiseSoundPitch(lowerPitch, higherPitch, gameState->collisionSound);
-	PlaySound(gameState->collisionSound);
+	RandomiseSoundPitch(lowerPitch, higherPitch, sound);
+	PlaySound(sound);
 }
 

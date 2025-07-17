@@ -1,10 +1,18 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-void InitAudio(GameState* gameState);
-void ShutdownAudio(GameState* gameState);
-static void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound);
-void PlayEatSound(GameState* gameState);
-void PlayCollisionSound(GameState* gameState);
+enum SfxID
+{
+	SFX_EAT,
+	SFX_COLLISION,
+	SFX_MENU_BUTTON,
+	SFX_COUNT // initiatise the size of audioSFX array in gamemanager master struct
+};
+
+void InitAudio(Sound audioSFX[]);
+void ShutdownAudio(Sound audioSFX[]);
+
+void PlaySoundRandomisedPitch(Sound sound);
+
 
 #endif

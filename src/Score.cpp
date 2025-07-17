@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "Score.h"
 
-
 int LoadHighScore(void)
 {
     int highScore = 0;
@@ -38,6 +37,9 @@ void CheckAndUpdateHighScore(int currentScore, int* highScore)
     if (currentScore > *highScore)
     {
         *highScore = currentScore;
+        if (!SaveHighScore(*highScore)) {
+            TraceLog(LOG_WARNING, "Failed to save high score");
+        }
         SaveHighScore(*highScore);
     }
 }
