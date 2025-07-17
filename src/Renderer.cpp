@@ -12,6 +12,8 @@ static Color const boardColors[2] = {
     { 0x49, 0x43, 0x51, 0xFF },  // light
     { 0x44, 0x3E, 0x4C, 0xFF }   // dark
 };
+
+// Button colours
 static Color const BUTTON_FACE_UP = { 0x5A, 0x54, 0x62, 0xFF }; // A mid-tone gray/purple
 static Color const BUTTON_FACE_HOVER = { 0x6C, 0x65, 0x73, 0xFF }; // A slightly lighter version
 static Color const BORDER_LIGHT = { 0x8C, 0x81, 0x93, 0xFF }; // Light edge
@@ -70,8 +72,6 @@ void UpdateWindowIcon()
 
 static void DrawGameBoard()
 {
-    const int borderThickness = 5;
-
     for (int x = 0; x < GRID_SIZE; x++)
     {
         for (int y = 0; y < GRID_SIZE; y++)
@@ -85,13 +85,13 @@ static void DrawGameBoard()
     }
 
     Rectangle borderRect = {
-          GAME_OFFSET - borderThickness,
-          GAME_OFFSET - borderThickness,
-          GAME_WIDTH + (borderThickness * 2.0f),
-          GAME_HEIGHT + (borderThickness * 2.0f)
+          GAME_OFFSET - GAME_BORDER,
+          GAME_OFFSET - GAME_BORDER,
+          GAME_WIDTH + (GAME_BORDER * 2),
+          GAME_HEIGHT + (GAME_BORDER * 2)
     };
 
-    DrawBeveledBorder(borderRect, borderThickness, borderColour, BORDER_DARK);
+    DrawBeveledBorder(borderRect, GAME_BORDER, borderColour, BORDER_DARK);
 }
 
 static void DrawGameUI(int score, int highScore)

@@ -91,12 +91,12 @@ void InitGame(GameState* gameState)
     UpdateFood(gameState);
 }
 
-void UpdateGame(GameState* gameState, float deltaTime)
+void UpdateGame(GameState* gameState, float deltaTime, Sound eatSound, Sound collisonSound)
 {
     if (!gameState->isGameOver)
     {
         UpdateSnake(&gameState->snake, deltaTime);
-        GameLogic(gameState);
+        GameLogic(gameState, eatSound, collisonSound);
     }
 }
 
@@ -252,32 +252,32 @@ static bool CheckFoodCollision(const Snake* snake, const Food* food)
         food->position.y == snake->bodyPart[0].position.y);
 }
 
-
-static void HandleFoodEat(GameState* gameState) {
-    PlayEatSound(gameState);
+static void HandleFoodEat(GameState* gameState, Sound eatSound) 
+{
+    PlaySoundRandomisedPitch(eatSound);
     GrowSnake(&gameState->snake);
     gameState->score += 5;
     UpdateFood(gameState);
 }
 
-void HandleGameOver(GameState* gameState)
+void HandleGameOver(GameState* gameState, Sound collisionSound)
 {
-    PlayCollisionSound(gameState);
+    PlaySoundRandomisedPitch(collisionSound);
     CheckAndUpdateHighScore(gameState->score, &gameState->highScore);
     gameState->isGameOver = true;
 }
 
-static void GameLogic(GameState* gameState)
+static void GameLogic(GameState* gameState, Sound eatSound, Sound collisionSound)
 {
     if (CheckFoodCollision(&gameState->snake, &gameState->food)) {
-        HandleFoodEat(gameState);
+        HandleFoodEat(gameState, eatSound);
     }
 
     // game over if collide with wall or snakes self
     if (CheckWallCollision(&gameState->snake) ||
         CheckSelfCollision(&gameState->snake))
     {
-        HandleGameOver(gameState);
+        HandleGameOver(gameState, collisionSound);
     }
 }
 

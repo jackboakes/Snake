@@ -4,6 +4,14 @@
 #define MAX_BUTTONS 5
 #define MAX_BUTTON_TEXT_LENGTH 32
 
+enum MenuButtonID
+{
+	START_GAME,
+	QUIT,
+	MAIN_MENU,
+	RESTART
+};
+
 struct Button
 {
 	int id;
@@ -22,14 +30,11 @@ struct UI
 	bool mouseButtonDown;
 	bool mouseButtonReleased;
 	int activeButtonID;
-
-	Sound buttonSound;
 };
 
 void InitMainMenuUI(UI* ui);
 void InitGameOverUI(UI* ui);
-void UpdateUI(UI* ui);
-void ResetUI(UI* ui);
+void UpdateUI(UI* ui, Sound buttonSound);
 
 int AddButton(UI* ui, Rectangle bounds, const char* text, int id);
 bool IsButtonActive(const UI* ui, int buttonId);

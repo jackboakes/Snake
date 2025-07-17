@@ -6,9 +6,11 @@
 
 #define TILE_SIZE 32
 #define GRID_SIZE 20
-#define GAME_OFFSET ((TILE_SIZE * 2) + 5)
-#define GAME_WIDTH (GRID_SIZE * TILE_SIZE)
-#define GAME_HEIGHT (GRID_SIZE * TILE_SIZE)
+#define GAME_BORDER 5
+#define GAME_OFFSET ((TILE_SIZE * 2) + GAME_BORDER) // 2 TILES + OFFSET FOR BEVELED BORDER
+#define GAME_WIDTH (GRID_SIZE * TILE_SIZE) // 20 X 32
+#define GAME_HEIGHT (GRID_SIZE * TILE_SIZE) // 20 X 32
+
 
 #define SNAKE_MAX_LEN 256
 #define INPUT_QUEUE_SIZE 2
@@ -59,10 +61,6 @@ struct GameState
     int isGameOver;
     int score;
     int highScore;
-
-    // Audio resources | needs to be vector to be scaleable
-    Sound eatSound;
-    Sound collisionSound;
 };
 
 
@@ -79,9 +77,9 @@ static bool IsOppositeDirection(Direction dir1, Direction dir2);
 
 // Game logic functions
 void InitGame(GameState* gameState);
-void UpdateGame(GameState* gameState, float deltaTime);
-static void GameLogic(GameState* gameState);
-static void HandleGameOver(GameState* gameState);
+void UpdateGame(GameState* gameState, float deltaTime, Sound eatSound, Sound collisonSound);
+static void GameLogic(GameState* gameState, Sound eatSound, Sound collisionSound);
+static void HandleGameOver(GameState* gameState, Sound collisionSound);
 
 // Snake functions
 static void InitSnake(Snake* snake);
@@ -94,7 +92,7 @@ static bool CheckSelfCollision(const Snake* snake);
 // Food functions
 static void UpdateFood(GameState* gameState);
 static bool CheckFoodCollision(const Snake* snake, const Food* food);
-static void HandleFoodEat(GameState* gameState);
+static void HandleFoodEat(GameState* gameState, Sound eatSound);
 
 
 

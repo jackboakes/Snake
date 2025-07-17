@@ -25,7 +25,20 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
   endif()
 endif()
 
-# Add all your source files
+# Header files
+set(HEADERS
+    include/Game.h
+    include/GameManager.h
+    include/Renderer.h
+    include/Input.h
+    include/Score.h
+    include/Audio.h
+    include/Assets.h
+    include/UI.h
+    include/Types.h
+)
+
+# Source files
 set(SOURCES
     src/Main.cpp
     src/Game.cpp
@@ -38,9 +51,8 @@ set(SOURCES
     src/UI.cpp
 )
 
-# Our Project
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

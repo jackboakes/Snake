@@ -25,8 +25,8 @@ void InitMainMenuUI(UI* ui)
 
     Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
 
-    AddButton(ui, buttonBounds, "Start Game", 1);
-    AddButton(ui, buttonBounds, "Quit", 2);
+    AddButton(ui, buttonBounds, "Start Game", START_GAME);
+    AddButton(ui, buttonBounds, "Quit", QUIT);
 
     CenterButtonsVertically(ui, screenWidth, screenHeight, buttonWidth, buttonHeight, buttonPadding);
 }
@@ -46,15 +46,15 @@ void InitGameOverUI(UI* ui)
     const int screenHeight = GetScreenHeight();
     Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
 
-    AddButton(ui, buttonBounds, "Main Menu", 1);
-    AddButton(ui, buttonBounds, "Restart", 2);
-    AddButton(ui, buttonBounds, "Quit", 3);
+    AddButton(ui, buttonBounds, "Main Menu", MAIN_MENU);
+    AddButton(ui, buttonBounds, "Restart", RESTART);
+    AddButton(ui, buttonBounds, "Quit", QUIT);
 
     CenterButtonsVertically(ui, screenWidth, screenHeight, buttonWidth, buttonHeight, buttonPadding);
 }
 
 
-void UpdateUI(UI* ui)
+void UpdateUI(UI* ui, Sound buttonSound)
 {
 	ui->mousePos = GetMousePosition();
     ui->mouseButtonDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
@@ -83,7 +83,7 @@ void UpdateUI(UI* ui)
 
             if (ui->mouseButtonReleased)
             {
-                PlayButtonSound(ui->buttonSound);
+                PlaySoundRandomisedPitch(buttonSound);
                 button->isReleased = true;
             }
         }

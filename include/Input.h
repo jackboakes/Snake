@@ -8,13 +8,9 @@ enum InputAction
 	INPUT_UP,
 	INPUT_LEFT,
 	INPUT_DOWN,
-	INPUT_RIGHT,
-	INPUT_SELECT,
-	INPUT_QUIT
+	INPUT_RIGHT
 };
 
-
-InputAction ReadMenuInput();
 InputAction ReadGameInput();
 
 #endif

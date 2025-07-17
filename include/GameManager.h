@@ -5,6 +5,12 @@
 #include "Types.h"
 #include "Game.h"
 #include "UI.h"
+#include "Audio.h"
+
+
+#define SCREEN_WIDTH  (GAME_WIDTH + (2 * GAME_OFFSET)) 
+#define SCREEN_HEIGHT (GAME_HEIGHT + (2 * GAME_OFFSET))
+
 
 // Used to control states
 struct GameManager
@@ -19,6 +25,9 @@ struct GameManager
     // UI Data
     UI mainMenuUI;
     UI gameOverUI;
+
+    // Audio
+    Sound audioSFX[SFX_COUNT];
 };
 
 

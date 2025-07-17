@@ -24,11 +24,14 @@ enum GameOverOption
 
 void InitGameManager(GameManager* gameManager)
 {
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
+    SetTargetFPS(60);
+
     gameManager->shouldQuit = false;
     gameManager->currentState = STATE_MAIN_MENU; 
     gameManager->nextState = STATE_MAIN_MENU;
 
-    InitAudio(gameManager);
+    InitAudio(gameManager->audioSFX);
     LoadGameTextures();
     UpdateWindowIcon();
 
@@ -40,7 +43,7 @@ void InitGameManager(GameManager* gameManager)
 void ShutdownGameManager(GameManager* gameManager)
 {
     UnloadGameTextures();
-    ShutdownAudio(gameManager);
+    ShutdownAudio(gameManager->audioSFX);
     CloseWindow();
 }
 
@@ -100,15 +103,15 @@ static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID
 
 static void UpdateMainMenu(GameManager* gameManager)
 {
-    UpdateUI(&gameManager->mainMenuUI);
+    UpdateUI(&gameManager->mainMenuUI, gameManager->audioSFX[SFX_MENU_BUTTON]);
 
     
-    if (IsButtonActive(&gameManager->mainMenuUI, 1) && GetButton(&gameManager->mainMenuUI, 1)->isReleased == true)
+    if (IsButtonActive(&gameManager->mainMenuUI, START_GAME) && GetButton(&gameManager->mainMenuUI, START_GAME)->isReleased == true)
     {
         gameManager->nextState = STATE_PLAYING;
     }
 
-    if (IsButtonActive(&gameManager->mainMenuUI, 2) && GetButton(&gameManager->mainMenuUI, 2)->isReleased == true)
+    if (IsButtonActive(&gameManager->mainMenuUI, QUIT) && GetButton(&gameManager->mainMenuUI, QUIT)->isReleased == true)
     {
         gameManager->nextState = STATE_QUIT;
     }
@@ -138,7 +141,7 @@ static void UpdateGameplay(GameManager* gameManager)
     HandleSnakeInput(&gameManager->gameState.snake, input);
 
     // Update
-    UpdateGame(&gameManager->gameState, deltaTime);
+    UpdateGame(&gameManager->gameState, deltaTime, gameManager->audioSFX[SFX_EAT], gameManager->audioSFX[SFX_COLLISION]);
 
     // Check transitions
     if (gameManager->gameState.isGameOver)
@@ -152,20 +155,20 @@ static void UpdateGameplay(GameManager* gameManager)
 
 static void UpdateGameOver(GameManager* gameManager)
 {
-    UpdateUI(&gameManager->gameOverUI);
+    UpdateUI(&gameManager->gameOverUI, gameManager->audioSFX[SFX_MENU_BUTTON]);
 
 
-    if (IsButtonActive(&gameManager->gameOverUI, 1) && GetButton(&gameManager->gameOverUI, 1)->isReleased == true)
+    if (IsButtonActive(&gameManager->gameOverUI, MAIN_MENU) && GetButton(&gameManager->gameOverUI, MAIN_MENU)->isReleased == true)
     {
         gameManager->nextState = STATE_MAIN_MENU;
     }
 
-    if (IsButtonActive(&gameManager->gameOverUI, 2) && GetButton(&gameManager->gameOverUI, 2)->isReleased == true)
+    if (IsButtonActive(&gameManager->gameOverUI, RESTART) && GetButton(&gameManager->gameOverUI, RESTART)->isReleased == true)
     {
         gameManager->nextState = STATE_PLAYING;
     }
 
-    if (IsButtonActive(&gameManager->gameOverUI, 3) && GetButton(&gameManager->gameOverUI, 3)->isReleased == true)
+    if (IsButtonActive(&gameManager->gameOverUI, QUIT) && GetButton(&gameManager->gameOverUI, QUIT)->isReleased == true)
     {
         gameManager->nextState = STATE_QUIT;
     }

@@ -1,23 +1,24 @@
 #include "raylib.h"
-#include "GameManager.h"
+#include "Audio.h"
 #include "Assets.h"
 
-// TODO: if you need more sounds refactor the master struct to store them in a vector
-void InitAudio(GameManager* gameManager)
+
+
+void InitAudio(Sound audioSFX[])
 {
 	InitAudioDevice();
-	gameManager->gameState.eatSound = LoadSound(GetAssetPath("sfx_snake_eat.wav"));
-	gameManager->gameState.collisionSound = LoadSound(GetAssetPath("sfx_snake_collision.wav"));
-	gameManager->mainMenuUI.buttonSound = LoadSound(GetAssetPath("sfx_menu_button_pressed.wav"));
-	gameManager->gameOverUI.buttonSound = LoadSound(GetAssetPath("sfx_menu_button_pressed.wav"));
+
+	audioSFX[SFX_EAT] = LoadSound(GetAssetPath("sfx_snake_eat.wav"));
+	audioSFX[SFX_COLLISION] = LoadSound(GetAssetPath("sfx_snake_collision.wav"));
+	audioSFX[SFX_MENU_BUTTON] = LoadSound(GetAssetPath("sfx_menu_button_pressed.wav"));
 }
 
-void ShutdownAudio(GameManager* gameManager)
+void ShutdownAudio(Sound audioSFX[])
 {
-	UnloadSound(gameManager->gameState.eatSound);
-	UnloadSound(gameManager->gameState.collisionSound);
-	UnloadSound(gameManager->mainMenuUI.buttonSound);
-	UnloadSound(gameManager->gameOverUI.buttonSound);
+	for (int i = 0; i < SFX_COUNT; i++)
+	{
+		UnloadSound(audioSFX[i]);
+	}
 	CloseAudioDevice();
 }
 
@@ -28,27 +29,12 @@ static void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound)
 	SetSoundPitch(sound, pitch);
 }
 
-void PlayEatSound(GameState* gameState)
+// Plays a sound with a pitch between 95 and 105 to reduce audio fatigue on repeated sounds
+void PlaySoundRandomisedPitch(Sound sound)
 {
 	const int lowerPitch = 95;
 	const int higherPitch = 105;
-	RandomiseSoundPitch(lowerPitch, higherPitch, gameState->eatSound);
-	PlaySound(gameState->eatSound);
-}
-
-void PlayCollisionSound(GameState* gameState)
-{
-	const int lowerPitch = 95;
-	const int higherPitch = 105;
-	RandomiseSoundPitch(lowerPitch, higherPitch, gameState->collisionSound);
-	PlaySound(gameState->collisionSound);
-}
-
-void PlayButtonSound(Sound buttonSound)
-{
-	const int lowerPitch = 95;
-	const int higherPitch = 105;
-	RandomiseSoundPitch(lowerPitch, higherPitch, buttonSound);
-	PlaySound(buttonSound);
+	RandomiseSoundPitch(lowerPitch, higherPitch, sound);
+	PlaySound(sound);
 }
 
