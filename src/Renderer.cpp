@@ -86,13 +86,13 @@ static void DrawGameBoard()
     }
 
     Rectangle borderRect = {
-          GAME_OFFSET - GAME_BORDER,
-          GAME_OFFSET - GAME_BORDER,
-          GAME_WIDTH + (GAME_BORDER * 2),
-          GAME_HEIGHT + (GAME_BORDER * 2)
+          GAME_OFFSET - BORDER_THICKNESS,
+          GAME_OFFSET - BORDER_THICKNESS,
+          GAME_WIDTH + (BORDER_THICKNESS * 2),
+          GAME_HEIGHT + (BORDER_THICKNESS * 2)
     };
 
-    DrawBeveledBorder(borderRect, GAME_BORDER, borderColour, BORDER_DARK);
+    DrawBeveledBorder(borderRect, BORDER_THICKNESS, borderColour, BORDER_DARK);
 }
 
 static void DrawGameUI(int score, int highScore)

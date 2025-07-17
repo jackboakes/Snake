@@ -41,4 +41,4 @@ https://github.com/user-attachments/assets/a620f365-8814-488e-b2fa-a5c8e2812360
 - **S**: Move Down
 - **D**: Move Right
 - **ESC**: Quit Game
-- **ENTER**: Select Menu Option
+- **Left Click**: Select Menu Option
