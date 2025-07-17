@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include "GameManager.h"
-#include "Types.h"
 #include "Input.h"
 #include "Renderer.h"
 #include "Audio.h"
@@ -103,15 +102,16 @@ static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID
 
 static void UpdateMainMenu(GameManager* gameManager)
 {
+    // data
     UpdateUI(&gameManager->mainMenuUI, gameManager->audioSFX[SFX_MENU_BUTTON]);
-
     
-    if (IsButtonActive(&gameManager->mainMenuUI, START_GAME) && GetButton(&gameManager->mainMenuUI, START_GAME)->isReleased == true)
+    // logic
+    if (WasActiveButtonReleased(&gameManager->mainMenuUI, START_GAME))
     {
         gameManager->nextState = STATE_PLAYING;
     }
 
-    if (IsButtonActive(&gameManager->mainMenuUI, QUIT) && GetButton(&gameManager->mainMenuUI, QUIT)->isReleased == true)
+    if (WasActiveButtonReleased(&gameManager->mainMenuUI, QUIT))
     {
         gameManager->nextState = STATE_QUIT;
     }
@@ -150,25 +150,25 @@ static void UpdateGameplay(GameManager* gameManager)
     }
 
     // Render
-    RenderGameplay(gameManager);
+    RenderGameplay(&gameManager->gameState);
 }
 
 static void UpdateGameOver(GameManager* gameManager)
 {
     UpdateUI(&gameManager->gameOverUI, gameManager->audioSFX[SFX_MENU_BUTTON]);
 
-
-    if (IsButtonActive(&gameManager->gameOverUI, MAIN_MENU) && GetButton(&gameManager->gameOverUI, MAIN_MENU)->isReleased == true)
+    
+    if (WasActiveButtonReleased(&gameManager->gameOverUI, MAIN_MENU))
     {
         gameManager->nextState = STATE_MAIN_MENU;
     }
 
-    if (IsButtonActive(&gameManager->gameOverUI, RESTART) && GetButton(&gameManager->gameOverUI, RESTART)->isReleased == true)
+    if (WasActiveButtonReleased(&gameManager->gameOverUI, RESTART))
     {
         gameManager->nextState = STATE_PLAYING;
     }
 
-    if (IsButtonActive(&gameManager->gameOverUI, QUIT) && GetButton(&gameManager->gameOverUI, QUIT)->isReleased == true)
+    if (WasActiveButtonReleased(&gameManager->gameOverUI, QUIT))
     {
         gameManager->nextState = STATE_QUIT;
     }

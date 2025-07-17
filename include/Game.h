@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "Input.h"
-#include "Types.h"
 
 #define TILE_SIZE 32
 #define GRID_SIZE 20
@@ -13,7 +12,6 @@
 
 
 #define SNAKE_MAX_LEN 256
-#define INPUT_QUEUE_SIZE 2
 #define SCORE_INCREMENT 5
 
 struct GameManager;
@@ -25,13 +23,6 @@ struct GridPosition
     int y;
 };
 
-struct DirectionQueue
-{
-    Direction dirValues[INPUT_QUEUE_SIZE];
-    int head;
-    int tail;
-    int count;
-};
 
 struct Food
 {
@@ -64,12 +55,6 @@ struct GameState
 };
 
 
-void InitDirectionQueue(DirectionQueue* queue);
-bool DirectionQueueEmpty(DirectionQueue* queue);
-bool DirectionQueueFull(DirectionQueue* queue);
-bool EnqueueDirection(DirectionQueue* queue, Direction dir);
-Direction DequeueDirection(DirectionQueue* queue);
-Direction GetNextDirection(DirectionQueue* queue);
 
 // Helper functions
 static GridPosition DirectionToGridOffset(Direction dir);
@@ -86,7 +71,7 @@ static void InitSnake(Snake* snake);
 static void UpdateSnake(Snake* snake, float deltaTime);
 static void GrowSnake(Snake* snake);
 void HandleSnakeInput(Snake* snake, InputAction input);
-static bool CheckWallCollison(const Snake* snake);
+static bool CheckWallCollision(const Snake* snake);
 static bool CheckSelfCollision(const Snake* snake);
 
 // Food functions

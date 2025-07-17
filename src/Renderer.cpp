@@ -2,8 +2,8 @@
 #include "GameManager.h"
 #include "Renderer.h"
 #include "Game.h"
-#include "Types.h"
 #include "Assets.h"
+#include "UI.h"
 
 static Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };
 static Color const borderColour = { 0x5A, 0x54, 0x62, 0xFF };
@@ -14,10 +14,11 @@ static Color const boardColors[2] = {
 };
 
 // Button colours
-static Color const BUTTON_FACE_UP = { 0x5A, 0x54, 0x62, 0xFF }; // A mid-tone gray/purple
+static const Color BUTTON_FACE_DEFAULT = { 0x5A, 0x54, 0x62, 0xFF }; // A mid-tone gray/purple
 static Color const BUTTON_FACE_HOVER = { 0x6C, 0x65, 0x73, 0xFF }; // A slightly lighter version
 static Color const BORDER_LIGHT = { 0x8C, 0x81, 0x93, 0xFF }; // Light edge
 static Color const BORDER_DARK = { 0x3E, 0x35, 0x42, 0xFF }; // Dark edge
+
 
 static Texture2D snakeAtlas = { 0 };
 
@@ -198,13 +199,62 @@ void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Colo
     DrawText(text, posX, posY, fontSize, colour);
 }
 
-void RenderGameplay(GameManager* gameManager)
+void RenderGameplay(GameState* gameState)
 {
     BeginDrawing();
     ClearBackground(backgroundColour);
     DrawGameBoard();
-    DrawSnake(&gameManager->gameState.snake);
-    DrawFood(&gameManager->gameState.food);
-    DrawGameUI(gameManager->gameState.score, gameManager->gameState.highScore);
+    DrawSnake(&gameState->snake);
+    DrawFood(&gameState->food);
+    DrawGameUI(gameState->score, gameState->highScore);
     EndDrawing();
+}
+
+void RenderButton(const Button* button)
+{
+    const int borderWidth = 5;
+    const int fontSize = 25;
+    const int fontSpacing = fontSize / 10;
+
+    const int textWidth = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).x;
+    const int textHeight = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).y;
+    const int textPosX = button->bounds.x + (button->bounds.width - textWidth) / 2;
+    const int textPosY = button->bounds.y + (button->bounds.height - textHeight) / 2;
+
+    Color buttonColour;
+    Color textColour = WHITE;
+
+
+    if (button->isHovered)
+    {
+        buttonColour = BUTTON_FACE_HOVER;
+    }
+    else
+    {
+        buttonColour = BUTTON_FACE_DEFAULT;
+    }
+
+    DrawRectangleRec(button->bounds, buttonColour);
+
+    if (button->isPressed)
+    {
+        // Invert the light source, remove shadow and move text for a pressed in look
+        DrawBeveledBorder(button->bounds, borderWidth, BORDER_DARK, BORDER_LIGHT);
+        DrawText(button->text, textPosX + 2, textPosY + 2, fontSize, textColour);
+    }
+    else
+    {
+        // Standard top left light source look with a shadow
+        DrawBeveledBorder(button->bounds, borderWidth, BORDER_LIGHT, BORDER_DARK);
+        DrawTextWithShadow(button->text, textPosX, textPosY, fontSize, textColour);
+
+    }
+}
+
+void RenderUI(const UI* ui)
+{
+    for (int i = 0; i < ui->buttonCount; i++)
+    {
+        RenderButton(&ui->buttons[i]);
+    }
 }

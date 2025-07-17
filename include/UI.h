@@ -38,15 +38,14 @@ void UpdateUI(UI* ui, Sound buttonSound);
 
 int AddButton(UI* ui, Rectangle bounds, const char* text, int id);
 bool IsButtonActive(const UI* ui, int buttonId);
-Button* GetButton(UI* ui, int buttonId);
-int GetButtonIndex(const UI* ui, int buttonId);
+Button* GetButton(const UI* ui, int buttonId);
+bool WasActiveButtonReleased(const UI* ui, int buttonId);
 
 // Layout Helpers
 void CenterButtonsVertically(UI* ui, int screenWidth, int screenHeight, int buttonWidth, int buttonHeight, int padding);
 void PositionButton(UI* ui, int buttonIndex, int x, int y, int width, int height);
 
-// Rendering
-void RenderUI(const UI* ui);
-void RenderButton(const Button* button);
+
+
 
 #endif

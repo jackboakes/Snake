@@ -3,11 +3,6 @@
 #include "Renderer.h"
 #include "Audio.h"
 
-static const Color BUTTON_FACE_DEFAULT = { 0x40, 0x3A, 0x48, 0xFF };
-static const Color BUTTON_FACE_HOVER = { 0x6C, 0x65, 0x73, 0xFF };
-static const Color BORDER_LIGHT = { 0x8C, 0x81, 0x93, 0xFF };
-static const Color BORDER_DARK = { 0x3E, 0x35, 0x42, 0xFF };
-
 
 void InitMainMenuUI(UI* ui)
 {
@@ -60,6 +55,8 @@ void UpdateUI(UI* ui, Sound buttonSound)
     ui->mouseButtonDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
 	ui->mouseButtonReleased = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
 
+    ui->activeButtonID = -1;
+
     for (int i = 0; i < ui->buttonCount; i++)
     {
         Button* button = &ui->buttons[i];
@@ -86,6 +83,7 @@ void UpdateUI(UI* ui, Sound buttonSound)
                 PlaySoundRandomisedPitch(buttonSound);
                 button->isReleased = true;
             }
+
         }
     }
 }
@@ -111,28 +109,32 @@ bool IsButtonActive(const UI* ui, int buttonId)
     return ui->activeButtonID == buttonId;
 }
 
-Button* GetButton(UI* ui, int buttonId)
+
+Button* GetButton(const UI* ui, int buttonId)
 {
     for (int i = 0; i < ui->buttonCount; i++)
     {
         if (ui->buttons[i].id == buttonId)
         {
-            return &ui->buttons[i];
+            return (Button*)&ui->buttons[i];
         }
     }
     return NULL;
 }
 
-int GetButtonIndex(const UI* ui, int buttonId)
+// needs to be hovered and released on the button
+bool WasActiveButtonReleased(const UI* ui, int buttonId)
 {
-    for (int i = 0; i < ui->buttonCount; i++)
+    if (!IsButtonActive(ui, buttonId))
+        return false;
+
+    Button* button = GetButton(ui, buttonId);
+    if (button == NULL)
     {
-        if (ui->buttons[i].id == buttonId)
-        {
-            return i;
-        }
+        return false;
     }
-    return -1;
+
+    return button->isReleased;
 }
 
 
@@ -166,53 +168,6 @@ void PositionButton(UI* ui, int buttonId, int x, int y, int width, int height)
     }
 }
 
-void RenderButton(const Button* button)
-{
-    const int borderWidth = 5;
-    const int fontSize = 25;
-    const int fontSpacing = fontSize / 10;
 
-    const int textWidth = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).x;
-    const int textHeight = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).y;
-    const int textPosX = button->bounds.x + (button->bounds.width - textWidth) / 2;
-    const int textPosY = button->bounds.y + (button->bounds.height - textHeight) / 2;
-
-    Color buttonColour;
-    Color textColour = WHITE;
-
-
-    if (button->isHovered)
-    {
-        buttonColour = BUTTON_FACE_HOVER;
-    }
-    else
-    {
-        buttonColour = BUTTON_FACE_DEFAULT;
-    }
-
-    DrawRectangleRec(button->bounds, buttonColour);
-
-    if (button->isPressed)
-    {
-        // Invert the light source, remove shadow and move text for a pressed in look
-        DrawBeveledBorder(button->bounds, borderWidth, BORDER_DARK, BORDER_LIGHT);
-        DrawText(button->text, textPosX + 2, textPosY + 2, fontSize, textColour);
-    }
-    else
-    {
-        // Standard top left light source look with a shadow
-        DrawBeveledBorder(button->bounds, borderWidth, BORDER_LIGHT, BORDER_DARK);
-        DrawTextWithShadow(button->text, textPosX, textPosY, fontSize, textColour);
-
-    }
-}
-
-void RenderUI(const UI* ui)
-{
-    for (int i = 0; i < ui->buttonCount; i++)
-    {
-        RenderButton(&ui->buttons[i]);
-    }
-}
 
 

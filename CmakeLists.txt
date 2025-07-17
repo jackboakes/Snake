@@ -35,7 +35,6 @@ set(HEADERS
     include/Audio.h
     include/Assets.h
     include/UI.h
-    include/Types.h
 )
 
 # Source files

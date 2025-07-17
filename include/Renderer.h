@@ -15,19 +15,22 @@ void LoadGameTextures();
 void UnloadGameTextures();
 void UpdateWindowIcon();
 
-// Individual draw functions
+// Gameplay draw functions
 static void DrawGameBoard();
 static void DrawGameUI(int score, int highScore);
 static Rectangle GetHeadSpriteRect(Direction direction);
 static void DrawSnake(const Snake* snake);
 static void DrawFood(const Food* food);
+void RenderGameplay(GameState* gameState);
 
 // Built upon raylib functions
 void DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColour, Color darkColour);
 void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Color colour);
 
 // Rendering functions
-void RenderGameplay(GameManager* gameManager);
+
+void RenderUI(const UI* ui);
+void RenderButton(const Button* button);
 
 
 #endif
