@@ -5,71 +5,20 @@
 #include "Assets.h"
 #include "UI.h"
 
-static Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF };
-static Color const borderColour = { 0x5A, 0x54, 0x62, 0xFF };
-static Color const backgroundColour = { 0x2D, 0x27, 0x2F, 0xFF };
+
+static Color const snakeColour = { 0xC2, 0x32, 0x1D, 0xFF }; // pikmin red
+static Color const borderColour = { 0x5A, 0x54, 0x62, 0xFF }; // A mid-tone gray/purple
+static Color const backgroundColour = { 0x2D, 0x27, 0x2F, 0xFF }; // dark purple/black
 static Color const boardColors[2] = {
     { 0x49, 0x43, 0x51, 0xFF },  // light
     { 0x44, 0x3E, 0x4C, 0xFF }   // dark
 };
 
 // Button colours
-static const Color BUTTON_FACE_DEFAULT = { 0x5A, 0x54, 0x62, 0xFF }; // A mid-tone gray/purple
+static const Color BUTTON_FACE_DEFAULT = borderColour; // A mid-tone gray/purple
 static Color const BUTTON_FACE_HOVER = { 0x6C, 0x65, 0x73, 0xFF }; // A slightly lighter version
 static Color const BORDER_LIGHT = { 0x8C, 0x81, 0x93, 0xFF }; // Light edge
 static Color const BORDER_DARK = { 0x3E, 0x35, 0x42, 0xFF }; // Dark edge
-
-
-static Texture2D snakeAtlas = { 0 };
-
-// Helper function to get a 32x32 sprite from the atlas by index
-static Rectangle GetSpriteRect(int col, int row) 
-{
-    Rectangle spriteRect;
-
-    spriteRect = {
-            (float) (col * TILE_SIZE),
-            (float) (row * TILE_SIZE),
-            TILE_SIZE,
-            TILE_SIZE
-    };
-
-    return  spriteRect;
-}
-
-void LoadGameTextures()
-{
-    snakeAtlas = LoadTexture(GetAssetPath("snake_atlas.png"));
-
-    if (snakeAtlas.id > 0)
-    {
-        TraceLog(LOG_INFO, "Snake atlas loaded successfully");
-    }
-    else
-    {
-        TraceLog(LOG_WARNING, "Failed to load snake atlas");
-    }
-}
-
-void UnloadGameTextures()
-{
-    if (snakeAtlas.id > 0)
-    {
-        UnloadTexture(snakeAtlas);
-    }
-}
-
-// Sets the icon for the window using image from our atlas
-void UpdateWindowIcon()
-{
-    Image fullSnakeAtlas = LoadImageFromTexture(snakeAtlas);
-    Rectangle iconSpriteRect = GetSpriteRect(2, 0); // South facing head
-    Image windowIcon = ImageFromImage(fullSnakeAtlas, iconSpriteRect);
-    UnloadImage(fullSnakeAtlas);
-
-    SetWindowIcon(windowIcon);
-    UnloadImage(windowIcon);
-}
 
 static void DrawGameBoard()
 {
@@ -117,16 +66,17 @@ static Rectangle GetHeadSpriteRect(Direction direction)
 {
     switch (direction)
     {
-    case DIR_NORTH: return GetSpriteRect(0,0);  // head facing up
-    case DIR_WEST:  return GetSpriteRect(1, 0);  // head facing left
-    case DIR_SOUTH: return GetSpriteRect(2, 0);  // head facing down
-    case DIR_EAST:  return GetSpriteRect(3, 0);  // head facing right
-    default:        return GetSpriteRect(0, 0);  // default
+    case DIR_NORTH: return GetSpriteRect(0,0, TILE_SIZE);  // head facing up
+    case DIR_WEST:  return GetSpriteRect(1, 0, TILE_SIZE);  // head facing left
+    case DIR_SOUTH: return GetSpriteRect(2, 0, TILE_SIZE);  // head facing down
+    case DIR_EAST:  return GetSpriteRect(3, 0, TILE_SIZE);  // head facing right
+    default:        return GetSpriteRect(0, 0, TILE_SIZE);  // default
     }
 }
 
 static void DrawSnake(const Snake* snake)
 {
+    Texture2D snakeAtlas = GetSnakeAtlas();
     for (int i = 1; i < snake->length; i++) 
     {
         int pixelX = GAME_OFFSET + (snake->bodyPart[i].position.x * TILE_SIZE);
@@ -161,11 +111,11 @@ static void DrawFood(const Food* food)
 {
     int pixelX = GAME_OFFSET + (food->position.x * TILE_SIZE);
     int pixelY = GAME_OFFSET + (food->position.y * TILE_SIZE);
-
+    Texture2D snakeAtlas = GetSnakeAtlas();
 
     if (snakeAtlas.id > 0)
     {
-        Rectangle foodRect = GetSpriteRect(0, 2);
+        Rectangle foodRect = GetSpriteRect(0, 2, TILE_SIZE);
         Rectangle destRect = { (float)pixelX, (float)pixelY, (float)TILE_SIZE, (float)TILE_SIZE };
         DrawTexturePro(snakeAtlas, foodRect, destRect, { 0, 0 }, 0.0f, WHITE);
     }
@@ -175,6 +125,16 @@ static void DrawFood(const Food* food)
     }
 }
 
+void RenderGameplay(GameState* gameState)
+{
+    BeginDrawing();
+    ClearBackground(backgroundColour);
+    DrawGameBoard();
+    DrawSnake(&gameState->snake);
+    DrawFood(&gameState->food);
+    DrawGameUI(gameState->score, gameState->highScore);
+    EndDrawing();
+}
 
 // Refactors raylib.h DrawRectangleLinesEx to take in two colours and create a bevel
 // with a light colour in the top and left border, and darker in the bottom and right
@@ -199,18 +159,18 @@ void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Colo
     DrawText(text, posX, posY, fontSize, colour);
 }
 
-void RenderGameplay(GameState* gameState)
+
+
+static void DrawCenteredTitle(const char* title, int y, int fontSize, Color color)
 {
-    BeginDrawing();
-    ClearBackground(backgroundColour);
-    DrawGameBoard();
-    DrawSnake(&gameState->snake);
-    DrawFood(&gameState->food);
-    DrawGameUI(gameState->score, gameState->highScore);
-    EndDrawing();
+    const int fontSpacing = fontSize / 10;
+    const int titleWidth = MeasureTextEx(GetFontDefault(), title, fontSize, fontSpacing).x;
+    const int titlePosX = (GetScreenWidth() / 2) - (titleWidth / 2);
+
+    DrawTextWithShadow(title, titlePosX, y, fontSize, color);
 }
 
-void RenderButton(const Button* button)
+static void RenderButton(const Button* button)
 {
     const int borderWidth = 5;
     const int fontSize = 25;
@@ -251,10 +211,42 @@ void RenderButton(const Button* button)
     }
 }
 
-void RenderUI(const UI* ui)
+static void RenderAllButtons(const UI* ui)
 {
     for (int i = 0; i < ui->buttonCount; i++)
     {
         RenderButton(&ui->buttons[i]);
     }
+}
+
+
+void RenderMainMenu(const UI* ui)
+{
+    BeginDrawing();
+    ClearBackground(backgroundColour);
+    DrawCenteredTitle("SNAKE GAME", 250, 40, RED);
+    RenderAllButtons(ui);
+    EndDrawing();
+}
+
+void RenderGameOver(const UI* ui, int score, int highScore)
+{
+    const int scoreFontSize = 25;
+    const int screenWidth = GetScreenWidth();
+
+    BeginDrawing();
+    ClearBackground(backgroundColour);
+    DrawCenteredTitle("GAME OVER", 150, 40, RED);
+
+    // Draw scores
+    const char* scoreText = TextFormat("Final Score: %d", score);
+    const char* highScoreText = TextFormat("High Score: %d", highScore);
+    int scoreWidth = MeasureText(scoreText, scoreFontSize);
+    int highScoreWidth = MeasureText(highScoreText, scoreFontSize);
+
+    DrawTextWithShadow(scoreText, (screenWidth - scoreWidth) / 2, 200, scoreFontSize, RAYWHITE);
+    DrawTextWithShadow(highScoreText, (screenWidth - highScoreWidth) / 2, 230, scoreFontSize, YELLOW);
+
+    RenderAllButtons(ui);
+    EndDrawing();
 }

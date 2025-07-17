@@ -11,7 +11,7 @@ enum SfxID
 
 void InitAudio(Sound audioSFX[]);
 void ShutdownAudio(Sound audioSFX[]);
-static void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound);
+
 void PlaySoundRandomisedPitch(Sound sound);
 
 

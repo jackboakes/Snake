@@ -20,8 +20,8 @@ void InitMainMenuUI(UI* ui)
 
     Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
 
-    AddButton(ui, buttonBounds, "Start Game", START_GAME);
-    AddButton(ui, buttonBounds, "Quit", QUIT);
+    AddButton(ui, buttonBounds, "Start Game", MAIN_MENU_START);
+    AddButton(ui, buttonBounds, "Quit", MAIN_MENU_QUIT);
 
     CenterButtonsVertically(ui, screenWidth, screenHeight, buttonWidth, buttonHeight, buttonPadding);
 }
@@ -41,9 +41,9 @@ void InitGameOverUI(UI* ui)
     const int screenHeight = GetScreenHeight();
     Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
 
-    AddButton(ui, buttonBounds, "Main Menu", MAIN_MENU);
-    AddButton(ui, buttonBounds, "Restart", RESTART);
-    AddButton(ui, buttonBounds, "Quit", QUIT);
+    AddButton(ui, buttonBounds, "Main Menu", GAME_OVER_MAIN_MENU);
+    AddButton(ui, buttonBounds, "Restart", GAME_OVER_RESTART);
+    AddButton(ui, buttonBounds, "Quit", GAME_OVER_QUIT);
 
     CenterButtonsVertically(ui, screenWidth, screenHeight, buttonWidth, buttonHeight, buttonPadding);
 }
@@ -88,10 +88,10 @@ void UpdateUI(UI* ui, Sound buttonSound)
     }
 }
 
-int AddButton(UI* ui, Rectangle bounds, const char* text, int id)
+void AddButton(UI* ui, Rectangle bounds, const char* text, int id)
 {
-    if (ui->buttonCount >= MAX_BUTTONS) return -1;
-    if (GetButton(ui, id) != NULL) return -1;
+    if (ui->buttonCount >= MAX_BUTTONS) return;
+    if (GetButton(ui, id) != NULL) return;
   
 
     int index = ui->buttonCount++;
@@ -100,8 +100,6 @@ int AddButton(UI* ui, Rectangle bounds, const char* text, int id)
     button->id = id;
     button->bounds = bounds;
     button->text = text;
-
-    return index;
 }
 
 bool IsButtonActive(const UI* ui, int buttonId)
@@ -136,7 +134,6 @@ bool WasActiveButtonReleased(const UI* ui, int buttonId)
 
     return button->isReleased;
 }
-
 
 void CenterButtonsVertically(UI* ui, int screenWidth, int screenHeight, int buttonWidth, int buttonHeight, int padding)
 {

@@ -26,36 +26,17 @@ static bool IsOppositeDirection(Direction dir1, Direction dir2)
         (dir1 == DIR_EAST && dir2 == DIR_WEST);
 }
 
-void InitGame(GameState* gameState)
-{
-    gameState->isGameOver = 0;
-    gameState->score = 0;
-    gameState->highScore = LoadHighScore();
-    InitSnake(&gameState->snake);
-    UpdateFood(gameState);
-}
-
-void UpdateGame(GameState* gameState, float deltaTime, Sound eatSound, Sound collisonSound)
-{
-    if (!gameState->isGameOver)
-    {
-        UpdateSnake(&gameState->snake, deltaTime);
-        GameLogic(gameState, eatSound, collisonSound);
-    }
-}
-
+// Snake spawns left and centre of game grid at 5, 10
 static void InitSnake(Snake* snake)
 {
     const int initSnakeSize = 4;
-
-    // Snake spawns left and centre of game area
+    snake->currentDirection = DIR_EAST;
     const int leftX = initSnakeSize + 1;
     const int halfY = GRID_SIZE / 2;
-
-    snake->length = initSnakeSize;
-    snake->currentDirection = DIR_EAST;
-    snake->moveSpeed = 10.0f;  
+    snake->moveSpeed = 10.0f; // sets the speed of the snake to 10ms 
     snake->moveTimer = 0.0f;
+    snake->moveInterval = 1.0f / snake->moveSpeed; // calc the time between moves based on snakes speed
+    snake->length = initSnakeSize;
 
     InitDirectionQueue(&snake->directionQueue);
 
@@ -67,17 +48,16 @@ static void InitSnake(Snake* snake)
     }
 }
 
-// Moves the snake
+// Moves the snake independent of frame rate
 static void UpdateSnake(Snake* snake, float deltaTime)
 {
-    // Accumulate time
+    // Accumulate time since last move
     snake->moveTimer += deltaTime; 
 
-    float moveInterval = 1.0f / snake->moveSpeed;
-    if (snake->moveTimer >= moveInterval)
+    if (snake->moveTimer >= snake->moveInterval)
     {
-        // Reset timer (keep any excess time for precision)
-        snake->moveTimer -= moveInterval;
+        // Reset timer (carry any time over to the next frame for precesion)
+        snake->moveTimer -= snake->moveInterval;
 
         Direction nextDirection = DequeueDirection(&snake->directionQueue);
 
@@ -86,11 +66,13 @@ static void UpdateSnake(Snake* snake, float deltaTime)
             snake->currentDirection = nextDirection;
         }
 
+        // move snake body by shifting each segment to next position
         for (int i = snake->length - 1; i > 0; i--)
         {
             snake->bodyPart[i] = snake->bodyPart[i - 1];
         }
 
+        // update head in current direction 
         GridPosition dirOnGrid = DirectionToGridOffset(snake->currentDirection);
         snake->bodyPart[0].position.x += dirOnGrid.x;
         snake->bodyPart[0].position.y += dirOnGrid.y;
@@ -204,7 +186,7 @@ static void HandleFoodEat(GameState* gameState, Sound eatSound)
     UpdateFood(gameState);
 }
 
-void HandleGameOver(GameState* gameState, Sound collisionSound)
+static void HandleGameOver(GameState* gameState, Sound collisionSound)
 {
     PlaySoundRandomisedPitch(collisionSound);
     CheckAndUpdateHighScore(gameState->score, &gameState->highScore);
@@ -222,6 +204,24 @@ static void GameLogic(GameState* gameState, Sound eatSound, Sound collisionSound
         CheckSelfCollision(&gameState->snake))
     {
         HandleGameOver(gameState, collisionSound);
+    }
+}
+
+void InitGame(GameState* gameState)
+{
+    gameState->isGameOver = 0;
+    gameState->score = 0;
+    gameState->highScore = LoadHighScore();
+    InitSnake(&gameState->snake);
+    UpdateFood(gameState);
+}
+
+void UpdateGame(GameState* gameState, float deltaTime, Sound eatSound, Sound collisonSound)
+{
+    if (!gameState->isGameOver)
+    {
+        UpdateSnake(&gameState->snake, deltaTime);
+        GameLogic(gameState, eatSound, collisonSound);
     }
 }
 

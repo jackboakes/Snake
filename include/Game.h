@@ -42,6 +42,7 @@ struct Snake
     DirectionQueue directionQueue;
     float moveSpeed;
     float moveTimer;
+    float moveInterval;
 };
 
 
@@ -55,29 +56,14 @@ struct GameState
 };
 
 
-
-// Helper functions
-static GridPosition DirectionToGridOffset(Direction dir);
-static bool IsOppositeDirection(Direction dir1, Direction dir2);
-
 // Game logic functions
 void InitGame(GameState* gameState);
-void UpdateGame(GameState* gameState, float deltaTime, Sound eatSound, Sound collisonSound);
-static void GameLogic(GameState* gameState, Sound eatSound, Sound collisionSound);
-static void HandleGameOver(GameState* gameState, Sound collisionSound);
+void UpdateGame(GameState* gameState, float deltaTime, Sound eatSound, Sound collisionSound);
 
 // Snake functions
-static void InitSnake(Snake* snake);
-static void UpdateSnake(Snake* snake, float deltaTime);
-static void GrowSnake(Snake* snake);
 void HandleSnakeInput(Snake* snake, InputAction input);
-static bool CheckWallCollision(const Snake* snake);
-static bool CheckSelfCollision(const Snake* snake);
 
-// Food functions
-static void UpdateFood(GameState* gameState);
-static bool CheckFoodCollision(const Snake* snake, const Food* food);
-static void HandleFoodEat(GameState* gameState, Sound eatSound);
+
 
 
 
