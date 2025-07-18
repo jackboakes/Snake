@@ -3,9 +3,9 @@
 
 A classic Snake game implemented in C-Style C++ using Raylib.
 <p align="center">
-<img width="330" style="margin-right:10px;" height="auto" alt="snake_menu" src="https://github.com/user-attachments/assets/9af5ad89-7164-40e2-b00b-7f31184781ac" />
-<img width="330" style="margin-right:10px;" height="auto" alt="snake_gameplay" src="https://github.com/user-attachments/assets/6297da4a-2ce8-4485-81af-4ad7491581c0" />
-<img width="330" height="auto" alt="snake_gameover" src="https://github.com/user-attachments/assets/040294f3-b1d2-48ba-9cf8-1b5f2bdc75d3" />
+<img width="290" height="auto" alt="snake_menu" src="https://github.com/user-attachments/assets/9af5ad89-7164-40e2-b00b-7f31184781ac" />
+<img width="290" height="auto" alt="snake_gameplay" src="https://github.com/user-attachments/assets/6297da4a-2ce8-4485-81af-4ad7491581c0" />
+<img width="290" height="auto" alt="snake_gameover" src="https://github.com/user-attachments/assets/040294f3-b1d2-48ba-9cf8-1b5f2bdc75d3" />
 </p>
 
 ## Requirements
