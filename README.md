@@ -1,12 +1,15 @@
-# <img width="32" height="32" alt="snake_logo" src="https://github.com/user-attachments/assets/600d56db-1ba5-4c11-a5b6-ecfc7e4fabbe" /> Snake Game <img width="32" height="32" alt="watermelon" src="https://github.com/user-attachments/assets/2cec05df-5692-4a30-81bb-05e1a8151799" />
+# <img width="32" height="32" alt="snake_logo" src="https://github.com/user-attachments/assets/29967f89-b8de-4582-a317-d8e71b1d36b4" />Snake Game <img width="32" height="32" alt="watermelon" src="https://github.com/user-attachments/assets/68420bae-6117-4959-bae1-ef09c6e266cb" />
+
+
 
 
 A classic Snake game implemented in C-Style C++ using Raylib.
 <p align="center">
-<img width="260" height="auto" alt="snake_menu" src="https://github.com/user-attachments/assets/9af5ad89-7164-40e2-b00b-7f31184781ac" />
-<img width="260" height="auto" alt="snake_gameplay" src="https://github.com/user-attachments/assets/6297da4a-2ce8-4485-81af-4ad7491581c0" />
-<img width="260" height="auto" alt="snake_gameover" src="https://github.com/user-attachments/assets/040294f3-b1d2-48ba-9cf8-1b5f2bdc75d3" />
+<img width="260" height="auto" alt="snake_menu" src="https://github.com/user-attachments/assets/a80eb2b8-fbb5-4853-9227-a1088e65bece" />
+<img width="260" height="auto" alt="snake_gameplay" src="https://github.com/user-attachments/assets/4470ebaa-c832-4f65-85be-c7fdb00422e6" />
+<img width="260" height="auto" alt="snake_gameover" src="https://github.com/user-attachments/assets/278272fa-359b-4fd1-8d64-4649543f311d" />
 </p>
+
 
 ## Requirements
 
