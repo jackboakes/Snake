@@ -33,9 +33,9 @@ private:
     Sound m_audioSFX[SFX_COUNT];
 
 public:
-    void InitGameManager();
-    void ShutdownGameManager();
-    void RunGameManager();
+    GameManager();
+    ~GameManager();
+    void Run();
 private:
     void UpdateMainMenu();
     void UpdateGameplay();

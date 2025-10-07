@@ -7,7 +7,7 @@
 #include "UI.h"
 
 
-void GameManager::InitGameManager()
+GameManager::GameManager()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
     SetTargetFPS(60);
@@ -15,13 +15,13 @@ void GameManager::InitGameManager()
     LoadGameTextures();
     UpdateWindowIcon(TILE_SIZE);
     m_shouldQuit = false;
-    m_currentState = GameManager::State::STATE_MAIN_MENU;
-    m_nextState = GameManager::State::STATE_MAIN_MENU;
+    m_currentState = State::STATE_MAIN_MENU;
+    m_nextState = State::STATE_MAIN_MENU;
     // init main menu since its first thing loaded
     InitMainMenuUI(&m_mainMenuUI);
 }
 
-void GameManager::ShutdownGameManager()
+GameManager::~GameManager()
 {
     UnloadGameTextures();
     ShutdownAudio(m_audioSFX);
@@ -115,7 +115,7 @@ void GameManager::SetGameManagerState(State newState)
     }
 }
 
-void GameManager::RunGameManager()
+void GameManager::Run()
 {
     // Main game loop
     while (!m_shouldQuit && !WindowShouldClose())
