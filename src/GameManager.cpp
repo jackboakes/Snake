@@ -7,142 +7,139 @@
 #include "UI.h"
 
 
-void InitGameManager(GameManager* gameManager)
+void GameManager::InitGameManager()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
     SetTargetFPS(60);
-    InitAudio(gameManager->audioSFX);
+    InitAudio(m_audioSFX);
     LoadGameTextures();
     UpdateWindowIcon(TILE_SIZE);
-    gameManager->shouldQuit = false;
-    gameManager->currentState = STATE_MAIN_MENU;
-    gameManager->nextState = STATE_MAIN_MENU;
+    m_shouldQuit = false;
+    m_currentState = GameManager::State::STATE_MAIN_MENU;
+    m_nextState = GameManager::State::STATE_MAIN_MENU;
     // init main menu since its first thing loaded
-    InitMainMenuUI(&gameManager->mainMenuUI);
+    InitMainMenuUI(&m_mainMenuUI);
 }
 
-void ShutdownGameManager(GameManager* gameManager)
+void GameManager::ShutdownGameManager()
 {
     UnloadGameTextures();
-    ShutdownAudio(gameManager->audioSFX);
+    ShutdownAudio(m_audioSFX);
     CloseWindow();
 }
 
-
-
-static void UpdateMainMenu(GameManager* gameManager)
+void GameManager::UpdateMainMenu()
 {
     // data
-    UpdateUI(&gameManager->mainMenuUI, gameManager->audioSFX[SFX_MENU_BUTTON]);
+    UpdateUI(&m_mainMenuUI, m_audioSFX[SFX_MENU_BUTTON]);
     
     // logic
-    if (WasActiveButtonReleased(&gameManager->mainMenuUI, MAIN_MENU_START))
+    if (WasActiveButtonReleased(&m_mainMenuUI, MAIN_MENU_START))
     {
-        gameManager->nextState = STATE_PLAYING;
+        m_nextState = State::STATE_PLAYING;
     }
 
-    if (WasActiveButtonReleased(&gameManager->mainMenuUI, MAIN_MENU_QUIT))
+    if (WasActiveButtonReleased(&m_mainMenuUI, MAIN_MENU_QUIT))
     {
-        gameManager->nextState = STATE_QUIT;
+        m_nextState = State::STATE_QUIT;
     }
 
     // Render
-    RenderMainMenu(&gameManager->mainMenuUI);
+    RenderMainMenu(&m_mainMenuUI);
 }
 
-static void UpdateGameplay(GameManager* gameManager)
+void GameManager::UpdateGameplay()
 {
     float deltaTime = GetFrameTime();
 
     // Input
     InputAction input = ReadGameInput();
-    HandleSnakeInput(&gameManager->gameState.snake, input);
+    HandleSnakeInput(&m_gameState.snake, input);
 
     // Update
-    UpdateGame(&gameManager->gameState, deltaTime, gameManager->audioSFX[SFX_EAT], gameManager->audioSFX[SFX_COLLISION]);
+    UpdateGame(&m_gameState, deltaTime, m_audioSFX[SFX_EAT], m_audioSFX[SFX_COLLISION]);
 
     // Check transitions
-    if (gameManager->gameState.isGameOver)
+    if (m_gameState.isGameOver)
     {
-        gameManager->nextState = STATE_GAME_OVER;
+        m_nextState = State::STATE_GAME_OVER;
     }
 
     // Render
-    RenderGameplay(&gameManager->gameState);
+    RenderGameplay(&m_gameState);
 }
 
-static void UpdateGameOver(GameManager* gameManager)
+void GameManager::UpdateGameOver()
 {
-    UpdateUI(&gameManager->gameOverUI, gameManager->audioSFX[SFX_MENU_BUTTON]);
+    UpdateUI(&m_gameOverUI, m_audioSFX[SFX_MENU_BUTTON]);
 
-    
-    if (WasActiveButtonReleased(&gameManager->gameOverUI, GAME_OVER_MAIN_MENU))
+    if (WasActiveButtonReleased(&m_gameOverUI, GAME_OVER_MAIN_MENU))
     {
-        gameManager->nextState = STATE_MAIN_MENU;
+        m_nextState = State::STATE_MAIN_MENU;
     }
 
-    if (WasActiveButtonReleased(&gameManager->gameOverUI, GAME_OVER_RESTART))
+    if (WasActiveButtonReleased(&m_gameOverUI, GAME_OVER_RESTART))
     {
-        gameManager->nextState = STATE_PLAYING;
+        m_nextState = State::STATE_PLAYING;
     }
 
-    if (WasActiveButtonReleased(&gameManager->gameOverUI, GAME_OVER_QUIT))
+    if (WasActiveButtonReleased(&m_gameOverUI, GAME_OVER_QUIT))
     {
-        gameManager->nextState = STATE_QUIT;
+        m_nextState = State::STATE_QUIT;
     }
 
     // Render
-    RenderGameOver(&gameManager->gameOverUI, gameManager->gameState.score, gameManager->gameState.highScore);
+    RenderGameOver(&m_gameOverUI, m_gameState.score, m_gameState.highScore);
 }
 
 // Any cleanup from old state could go here
-static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
+void GameManager::SetGameManagerState(State newState)
 {
-    gameManager->currentState = newStateID;
+    m_currentState = newState;
 
     // Any initialization for new state could go here
-    switch (newStateID)
+    switch (newState)
     {
-    case STATE_MAIN_MENU:
-        InitMainMenuUI(&gameManager->mainMenuUI);
+    case State::STATE_MAIN_MENU:
+        InitMainMenuUI(&m_mainMenuUI);
         break;
-    case STATE_PLAYING:
-        InitGame(&gameManager->gameState);
+    case State::STATE_PLAYING:
+        InitGame(&m_gameState);
         break;
-    case STATE_GAME_OVER:
-        InitGameOverUI(&gameManager->gameOverUI);
+    case State::STATE_GAME_OVER:
+        InitGameOverUI(&m_gameOverUI);
         break;
-    case STATE_QUIT:
-        gameManager->shouldQuit = true;
+    case State::STATE_QUIT:
+        m_shouldQuit = true;
         break;
     }
 }
 
-void RunGameManager(GameManager* gameManager)
+void GameManager::RunGameManager()
 {
     // Main game loop
-    while (!gameManager->shouldQuit && !WindowShouldClose())
+    while (!m_shouldQuit && !WindowShouldClose())
     {
         // Handle state transitions
-        if (gameManager->nextState != gameManager->currentState)
+        if (m_nextState != m_currentState)
         {
-            SetGameManagerState(gameManager, gameManager->nextState);
+            SetGameManagerState(m_nextState);
         }
 
         // Update the current state
-        switch (gameManager->currentState)
+        switch (m_currentState)
         {
-        case STATE_MAIN_MENU:
-            UpdateMainMenu(gameManager);
+        case State::STATE_MAIN_MENU:
+            UpdateMainMenu();
             break;
-        case STATE_PLAYING:
-            UpdateGameplay(gameManager);
+        case State::STATE_PLAYING:
+            UpdateGameplay();
             break;
-        case STATE_GAME_OVER:
-            UpdateGameOver(gameManager);
+        case State::STATE_GAME_OVER:
+            UpdateGameOver();
             break;
-        case STATE_QUIT:
-            gameManager->shouldQuit = true;
+        case State::STATE_QUIT:
+            m_shouldQuit = true;
             break;
         }
     }

@@ -1,44 +1,51 @@
-#ifndef GAME_MANAGER_H
-#define GAME_MANAGER_H
+#pragma once
 
 #include <raylib.h>
 #include "Game.h"
 #include "UI.h"
 #include "Audio.h"
 
-
 #define SCREEN_WIDTH  (GAME_WIDTH + (2 * GAME_OFFSET)) 
 #define SCREEN_HEIGHT (GAME_HEIGHT + (2 * GAME_OFFSET))
 
-enum GameStateID
+class GameManager
 {
-    STATE_MAIN_MENU,
-    STATE_PLAYING,
-    STATE_GAME_OVER,
-    STATE_QUIT
-};
+public:
 
-// Used to control states
-struct GameManager
-{
-    GameStateID currentState;
-    GameStateID nextState;
-    bool shouldQuit;
+private:
+    enum class State
+    {
+        STATE_MAIN_MENU,
+        STATE_PLAYING,
+        STATE_GAME_OVER,
+        STATE_QUIT
+    };
 
-    // Game Data
-    GameState gameState;
-
+    GameState m_gameState;
+    State m_currentState;
+    State m_nextState;
+    bool m_shouldQuit;
     // UI Data
-    UI mainMenuUI;
-    UI gameOverUI;
+    UI m_mainMenuUI;
+    UI m_gameOverUI;
 
     // Audio
-    Sound audioSFX[SFX_COUNT];
+    Sound m_audioSFX[SFX_COUNT];
+
+public:
+    void InitGameManager();
+    void ShutdownGameManager();
+    void RunGameManager();
+private:
+    void UpdateMainMenu();
+    void UpdateGameplay();
+    void UpdateGameOver();
+    void SetGameManagerState(State newState);
 };
 
 
-void InitGameManager(GameManager* gameManager);
-void ShutdownGameManager(GameManager* gameManager);
-void RunGameManager(GameManager* gameManager);
 
-#endif 
+
+
+
+
