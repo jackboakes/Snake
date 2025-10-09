@@ -1,7 +1,9 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 #include "Input.h"
+#include "GameData.h"
+#include "Snake.h"
+#include <vector>
 
 #define TILE_SIZE 32
 #define GRID_SIZE 20
@@ -10,18 +12,7 @@
 #define GAME_WIDTH (GRID_SIZE * TILE_SIZE) // 20 X 32
 #define GAME_HEIGHT (GRID_SIZE * TILE_SIZE) // 20 X 32
 
-
-#define SNAKE_MAX_LEN 256
 #define SCORE_INCREMENT 5
-
-struct GameManager;
-
-// Allows refering to grid position instead of screen space
-struct GridPosition
-{
-    int x;
-    int y;
-};
 
 
 struct Food
@@ -29,42 +20,22 @@ struct Food
     GridPosition position;
 };
 
-struct SnakePart
-{
-    GridPosition position;
-};
-
-struct Snake
-{
-    int length;
-    SnakePart bodyPart[SNAKE_MAX_LEN];
-    Direction currentDirection;
-    DirectionQueue directionQueue;
-    float moveSpeed;
-    float moveTimer;
-    float moveInterval;
-};
-
-
 struct GameState
 {
     Snake snake;
+    float g_moveTimer { 0.0f };
+    float g_moveInterval;
     Food food;
-    int isGameOver;
-    int score;
-    int highScore;
+    int isGameOver { false };
+    int score { 0 };
+    int highScore { 0 };
+    DirectionQueue directionQueue;
 };
 
 
 // Game logic functions
-void InitGame(GameState* gameState);
-void UpdateGame(GameState* gameState, float deltaTime, Sound eatSound, Sound collisionSound);
-
-// Snake functions
-void HandleSnakeInput(Snake* snake, InputAction input);
+void InitGame(GameState& gameState);
+void HandleInput(GameState& gameState, InputAction input);
+void UpdateGame(GameState& gameState, float deltaTime, Sound eatSound, Sound collisionSound);
 
 
-
-
-
-#endif

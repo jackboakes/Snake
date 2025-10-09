@@ -28,10 +28,12 @@ endif()
 # Header files
 set(HEADERS
     include/Game.h
+    include/GameData.h
     include/GameManager.h
     include/Renderer.h
     include/Input.h
     include/Score.h
+    include/Snake.h
     include/Audio.h
     include/Assets.h
     include/UI.h
@@ -41,10 +43,12 @@ set(HEADERS
 set(SOURCES
     src/Main.cpp
     src/Game.cpp
+    src/GameData.cpp
     src/GameManager.cpp
     src/Renderer.cpp
     src/Input.cpp
     src/Score.cpp
+    src/Snake.cpp
     src/Audio.cpp
     src/Assets.cpp
     src/UI.cpp

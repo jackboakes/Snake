@@ -22,12 +22,12 @@ private:
     };
 
     GameState m_gameState;
-    State m_currentState;
-    State m_nextState;
-    bool m_shouldQuit;
+    State m_currentState { State::STATE_MAIN_MENU };
+    State m_nextState { State::STATE_MAIN_MENU };
+    bool m_shouldQuit { false };
     // UI Data
-    UI m_mainMenuUI;
-    UI m_gameOverUI;
+    UI m_mainMenuUI {};
+    UI m_gameOverUI {};
 
     // Audio
     Sound m_audioSFX[SFX_COUNT];

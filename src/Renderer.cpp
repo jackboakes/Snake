@@ -77,21 +77,21 @@ static Rectangle GetHeadSpriteRect(Direction direction)
 static void DrawSnake(const Snake* snake)
 {
     Texture2D snakeAtlas = GetSnakeAtlas();
-    for (int i = 1; i < snake->length; i++) 
+    for (int i = 1; i < snake->g_bodyPart.size(); i++) 
     {
-        int pixelX = GAME_OFFSET + (snake->bodyPart[i].position.x * TILE_SIZE);
-        int pixelY = GAME_OFFSET + (snake->bodyPart[i].position.y * TILE_SIZE);
+        int pixelX = GAME_OFFSET + (snake->g_bodyPart[i].x * TILE_SIZE);
+        int pixelY = GAME_OFFSET + (snake->g_bodyPart[i].y * TILE_SIZE);
 
         DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, snakeColour);
     }
 
-    int headX = GAME_OFFSET + (int)(snake->bodyPart[0].position.x * TILE_SIZE);
-    int headY = GAME_OFFSET + (int)(snake->bodyPart[0].position.y * TILE_SIZE);
+    int headX = GAME_OFFSET + (int)(snake->g_bodyPart[0].x * TILE_SIZE);
+    int headY = GAME_OFFSET + (int)(snake->g_bodyPart[0].y * TILE_SIZE);
 
     if (snakeAtlas.id > 0)
     {
         // Get the correct sprite rectangle for the snake's direction
-        Rectangle sourceRect = GetHeadSpriteRect(snake->currentDirection);
+        Rectangle sourceRect = GetHeadSpriteRect(snake->g_currentDirection);
 
         // Destination rectangle (where to draw on screen)
         Rectangle destRect = { (float)headX, (float)headY, (float)TILE_SIZE, (float)TILE_SIZE};

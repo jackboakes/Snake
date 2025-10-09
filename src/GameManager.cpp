@@ -14,9 +14,6 @@ GameManager::GameManager()
     InitAudio(m_audioSFX);
     LoadGameTextures();
     UpdateWindowIcon(TILE_SIZE);
-    m_shouldQuit = false;
-    m_currentState = State::STATE_MAIN_MENU;
-    m_nextState = State::STATE_MAIN_MENU;
     // init main menu since its first thing loaded
     InitMainMenuUI(&m_mainMenuUI);
 }
@@ -54,10 +51,10 @@ void GameManager::UpdateGameplay()
 
     // Input
     InputAction input = ReadGameInput();
-    HandleSnakeInput(&m_gameState.snake, input);
+    HandleInput(m_gameState, input);
 
     // Update
-    UpdateGame(&m_gameState, deltaTime, m_audioSFX[SFX_EAT], m_audioSFX[SFX_COLLISION]);
+    UpdateGame(m_gameState, deltaTime, m_audioSFX[SFX_EAT], m_audioSFX[SFX_COLLISION]);
 
     // Check transitions
     if (m_gameState.isGameOver)
@@ -104,7 +101,7 @@ void GameManager::SetGameManagerState(State newState)
         InitMainMenuUI(&m_mainMenuUI);
         break;
     case State::STATE_PLAYING:
-        InitGame(&m_gameState);
+        InitGame(m_gameState);
         break;
     case State::STATE_GAME_OVER:
         InitGameOverUI(&m_gameOverUI);
