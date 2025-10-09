@@ -51,10 +51,10 @@ void GameManager::UpdateGameplay()
 
     // Input
     InputAction input = ReadGameInput();
-    HandleInput(m_gameState, input);
+    m_gameState.HandleInput(input);
 
     // Update
-    UpdateGame(m_gameState, deltaTime, m_audioSFX[SFX_EAT], m_audioSFX[SFX_COLLISION]);
+    m_gameState.UpdateGame(deltaTime, m_audioSFX[SFX_EAT], m_audioSFX[SFX_COLLISION]);
 
     // Check transitions
     if (m_gameState.isGameOver)
@@ -101,7 +101,7 @@ void GameManager::SetGameManagerState(State newState)
         InitMainMenuUI(&m_mainMenuUI);
         break;
     case State::STATE_PLAYING:
-        InitGame(m_gameState);
+        m_gameState.Reset();
         break;
     case State::STATE_GAME_OVER:
         InitGameOverUI(&m_gameOverUI);

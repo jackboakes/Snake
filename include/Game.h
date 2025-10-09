@@ -5,37 +5,47 @@
 #include "Snake.h"
 #include <vector>
 
-#define TILE_SIZE 32
-#define GRID_SIZE 20
-#define BORDER_THICKNESS 5
-#define GAME_OFFSET ((TILE_SIZE * 2) + BORDER_THICKNESS) // 2 TILES + OFFSET FOR BEVELED BORDER
-#define GAME_WIDTH (GRID_SIZE * TILE_SIZE) // 20 X 32
-#define GAME_HEIGHT (GRID_SIZE * TILE_SIZE) // 20 X 32
-
-#define SCORE_INCREMENT 5
-
-
 struct Food
 {
     GridPosition position;
 };
 
-struct GameState
+class GameState
 {
+public:
     Snake snake;
-    float g_moveTimer { 0.0f };
-    float g_moveInterval;
     Food food;
-    int isGameOver { false };
     int score { 0 };
     int highScore { 0 };
-    DirectionQueue directionQueue;
+    bool isGameOver { false };
+
+private:
+
+    DirectionQueue m_directionQueue;
+    float m_moveTimer { 0.0f };
+    float m_moveInterval;
+
+public:
+    GameState();
+
+    void Reset();
+    void HandleInput(InputAction input);
+    void UpdateGame(float deltaTime, Sound eatSound, Sound collisionSound);
+private:
+
+    bool IsOppositeDirection(Direction dir1, Direction dir2);
+
+    bool CheckWallCollision(const Snake& snake);
+    bool CheckSelfCollision(const Snake& snake);
+
+    // TODO: Move this to a Food class?
+    void GameState::UpdateFood();
+    bool CheckFoodCollision(const Snake& snake, const Food& food);
+    void HandleFoodEat(Sound eatSound);
+
+    void HandleGameOver(Sound collisionSound);
+    void GameLogic(Sound eatSound, Sound collisionSound);
+
 };
-
-
-// Game logic functions
-void InitGame(GameState& gameState);
-void HandleInput(GameState& gameState, InputAction input);
-void UpdateGame(GameState& gameState, float deltaTime, Sound eatSound, Sound collisionSound);
 
 
