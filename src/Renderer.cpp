@@ -140,10 +140,10 @@ void RenderGameplay(GameState* gameState)
 // with a light colour in the top and left border, and darker in the bottom and right
 void DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColour, Color darkColour)
 {
-    Rectangle top = { borderRec.x, borderRec.y, borderRec.width, borderThickness };
-    Rectangle bottom = { borderRec.x, borderRec.y + borderRec.height - borderThickness, borderRec.width, borderThickness };
-    Rectangle left = { borderRec.x, borderRec.y + borderThickness, borderThickness, borderRec.height - (2 * borderThickness) };
-    Rectangle right = { borderRec.x + borderRec.width - borderThickness, borderRec.y + borderThickness, borderThickness, borderRec.height - (2 * borderThickness) };
+    Rectangle top = { borderRec.x, borderRec.y, borderRec.width, (float)borderThickness };
+    Rectangle bottom = { borderRec.x, borderRec.y + borderRec.height - (float)borderThickness, borderRec.width, (float)borderThickness };
+    Rectangle left = { borderRec.x, borderRec.y + (float)borderThickness, (float)borderThickness, borderRec.height - (2 * (float)borderThickness) };
+    Rectangle right = { borderRec.x + borderRec.width - (float)borderThickness, borderRec.y + (float)borderThickness, (float)borderThickness, borderRec.height - (2 * (float)borderThickness) };
 
     DrawRectangleRec(top, lightColour);
     DrawRectangleRec(bottom, darkColour);
@@ -163,8 +163,8 @@ void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Colo
 
 static void DrawCenteredTitle(const char* title, int y, int fontSize, Color color)
 {
-    const int fontSpacing = fontSize / 10;
-    const int titleWidth = MeasureTextEx(GetFontDefault(), title, fontSize, fontSpacing).x;
+    const float fontSpacing = (float)fontSize / 10.0f;
+    const int titleWidth = MeasureTextEx(GetFontDefault(), title, (float)fontSize, fontSpacing).x;
     const int titlePosX = (GetScreenWidth() / 2) - (titleWidth / 2);
 
     DrawTextWithShadow(title, titlePosX, y, fontSize, color);
@@ -173,8 +173,8 @@ static void DrawCenteredTitle(const char* title, int y, int fontSize, Color colo
 static void RenderButton(const Button* button)
 {
     const int borderWidth = 5;
-    const int fontSize = 25;
-    const int fontSpacing = fontSize / 10;
+    const float fontSize = 25.0f;
+    const float fontSpacing = fontSize / 10.0f;
 
     const int textWidth = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).x;
     const int textHeight = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).y;

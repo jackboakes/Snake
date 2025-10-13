@@ -1,9 +1,6 @@
-#include "raylib.h"
 #include "Game.h"
-#include "Input.h"
-#include "Score.h"
 #include "Audio.h"
-
+#include "raylib.h"
 
 bool GameState::IsOppositeDirection(Direction dir1, Direction dir2)
 {

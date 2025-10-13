@@ -1,4 +1,4 @@
-#include "raylib.h"
+
 #include "Audio.h"
 #include "Assets.h" // get asset path helper
 
@@ -32,8 +32,8 @@ static void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound)
 // Plays a sound with a pitch between 95 and 105 to reduce audio fatigue on repeated sounds
 void PlaySoundRandomisedPitch(Sound sound)
 {
-	const int lowerPitch = 95;
-	const int higherPitch = 105;
+	constexpr int lowerPitch = 95;
+	constexpr int higherPitch = 105;
 	RandomiseSoundPitch(lowerPitch, higherPitch, sound);
 	PlaySound(sound);
 }
