@@ -4,14 +4,13 @@
 #include "Renderer.h"
 #include "Audio.h"
 #include "Assets.h"
-#include "UI.h"
+
 
 
 GameManager::GameManager()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
     SetTargetFPS(60);
-    InitAudio(m_audioSFX);
     LoadGameTextures();
     UpdateWindowIcon(TILE_SIZE);
     // init main menu since its first thing loaded
@@ -21,14 +20,13 @@ GameManager::GameManager()
 GameManager::~GameManager()
 {
     UnloadGameTextures();
-    ShutdownAudio(m_audioSFX);
     CloseWindow();
 }
 
 void GameManager::UpdateMainMenu()
 {
     // data
-    UpdateUI(&m_mainMenuUI, m_audioSFX[SFX_MENU_BUTTON]);
+    UpdateUI(&m_mainMenuUI, m_audio);
     
     // logic
     if (WasActiveButtonReleased(&m_mainMenuUI, MAIN_MENU_START))
@@ -54,12 +52,13 @@ void GameManager::UpdateGameplay()
     m_gameState.HandleInput(input);
 
     // Update
-    m_gameState.UpdateGame(deltaTime, m_audioSFX[SFX_EAT], m_audioSFX[SFX_COLLISION]);
+    m_gameState.UpdateGame(deltaTime, m_audio);
 
-    // Check transitions
+    // If game is over no need to render next frame
     if (m_gameState.isGameOver)
     {
         m_nextState = State::STATE_GAME_OVER;
+        return;
     }
 
     // Render
@@ -68,7 +67,7 @@ void GameManager::UpdateGameplay()
 
 void GameManager::UpdateGameOver()
 {
-    UpdateUI(&m_gameOverUI, m_audioSFX[SFX_MENU_BUTTON]);
+    UpdateUI(&m_gameOverUI, m_audio);
 
     if (WasActiveButtonReleased(&m_gameOverUI, GAME_OVER_MAIN_MENU))
     {

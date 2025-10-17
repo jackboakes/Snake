@@ -1,5 +1,5 @@
-#ifndef UI_H
-#define UI_H
+#pragma once
+#include "Audio.h"
 
 #define MAX_BUTTONS 5
 #define MAX_BUTTON_TEXT_LENGTH 32
@@ -41,7 +41,7 @@ struct UI
 
 void InitMainMenuUI(UI* ui);
 void InitGameOverUI(UI* ui);
-void UpdateUI(UI* ui, Sound buttonSound);
+void UpdateUI(UI* ui, Audio& audio);
 
 // Button functions
 void AddButton(UI* ui, Rectangle bounds, const char* text, int id);
@@ -52,8 +52,3 @@ bool WasActiveButtonReleased(const UI* ui, int buttonId);
 // Layout Helpers
 void CenterButtonsVertically(UI* ui, int screenWidth, int screenHeight, int buttonWidth, int buttonHeight, int padding);
 void PositionButton(UI* ui, int buttonIndex, int x, int y, int width, int height);
-
-
-
-
-#endif

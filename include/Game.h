@@ -35,7 +35,7 @@ public:
 
     void Reset();
     void HandleInput(InputAction input);
-    void UpdateGame(float deltaTime, Sound eatSound, Sound collisionSound);
+    void UpdateGame(float deltaTime, Audio& audio);
 private:
 
     bool IsOppositeDirection(Direction dir1, Direction dir2);
@@ -46,10 +46,10 @@ private:
     // TODO: Move this to a Food class?
     void GameState::UpdateFood();
     bool CheckFoodCollision(const Snake& snake, const Food& food);
-    void HandleFoodEat(Sound eatSound);
+    void HandleFoodEat(Audio& audio);
 
-    void HandleGameOver(Sound collisionSound);
-    void GameLogic(Sound eatSound, Sound collisionSound);
+    void HandleGameOver(Audio& audio);
+    void GameLogic(Audio& audio);
 
 };
 

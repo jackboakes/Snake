@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "Audio.h"
 #include "raylib.h"
 
 bool GameState::IsOppositeDirection(Direction dir1, Direction dir2)
@@ -69,32 +68,32 @@ bool GameState::CheckFoodCollision(const Snake& snake, const Food& food)
         food.position.y == snake.g_bodyPart[0].y);
 }
 
-void GameState::HandleFoodEat(Sound eatSound) 
+void GameState::HandleFoodEat(Audio& audio)
 {
-    PlaySoundRandomisedPitch(eatSound);
+    audio.PlaySoundRandomisedPitch(Audio::SFXID::EAT);
     snake.Grow();
     score += 5;
     UpdateFood();
 }
 
-void GameState::HandleGameOver(Sound collisionSound)
+void GameState::HandleGameOver(Audio& audio)
 {
-    PlaySoundRandomisedPitch(collisionSound);
+    audio.PlaySoundRandomisedPitch(Audio::SFXID::COLLISION);
     m_score.CheckAndUpdateHighScore(score, &highScore);
     isGameOver = true;
 }
-void GameState::GameLogic(Sound eatSound, Sound collisionSound)
+void GameState::GameLogic(Audio& audio)
 {
     if (CheckFoodCollision(snake, food))
     {
-        HandleFoodEat(eatSound);
+        HandleFoodEat(audio);
     }
 
     // game over if collide with wall or snakes self
     if (CheckWallCollision(snake) ||
         CheckSelfCollision(snake))
     {
-        HandleGameOver(collisionSound);
+        HandleGameOver(audio);
     }
 }
 
@@ -146,7 +145,7 @@ void GameState::HandleInput(InputAction input)
 }
 
 
-void GameState::UpdateGame(float deltaTime, Sound eatSound, Sound collisonSound)
+void GameState::UpdateGame(float deltaTime, Audio& audio)
 {
     if (isGameOver)
     {
@@ -167,7 +166,7 @@ void GameState::UpdateGame(float deltaTime, Sound eatSound, Sound collisonSound)
         snake.Update(nextDirection);
     }
 
-        GameLogic(eatSound, collisonSound);
+        GameLogic(audio);
 }
 
 

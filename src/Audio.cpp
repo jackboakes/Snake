@@ -4,36 +4,37 @@
 
 
 
-void InitAudio(Sound audioSFX[])
+Audio::Audio()
 {
 	InitAudioDevice();
 
-	audioSFX[SFX_EAT] = LoadSound(GetAssetPath("sfx_snake_eat.wav"));
-	audioSFX[SFX_COLLISION] = LoadSound(GetAssetPath("sfx_snake_collision.wav"));
-	audioSFX[SFX_MENU_BUTTON] = LoadSound(GetAssetPath("sfx_menu_button_pressed.wav"));
+	m_audioSFX[static_cast<int>(SFXID::EAT)] = LoadSound(GetAssetPath("sfx_snake_eat.wav"));
+	m_audioSFX[static_cast<int>(SFXID::COLLISION)] = LoadSound(GetAssetPath("sfx_snake_collision.wav"));
+	m_audioSFX[static_cast<int>(SFXID::MENU_BUTTON)] = LoadSound(GetAssetPath("sfx_menu_button_pressed.wav"));
 }
 
-void ShutdownAudio(Sound audioSFX[])
+Audio::~Audio()
 {
-	for (int i = 0; i < SFX_COUNT; i++)
+	for (int i = 0; i < m_audioSFX.size(); i++)
 	{
-		UnloadSound(audioSFX[i]);
+		UnloadSound(m_audioSFX[i]);
 	}
 	CloseAudioDevice();
 }
 
 // Helper function to reduce audio fatigue on repeated sounds
-static void RandomiseSoundPitch(int lowerBound, int upperBound, Sound sound)
+void Audio::RandomiseSoundPitch(int lowerBound, int upperBound, Sound& sound)
 {
 	float pitch = GetRandomValue(lowerBound, upperBound) / 100.0f;
 	SetSoundPitch(sound, pitch);
 }
 
 // Plays a sound with a pitch between 95 and 105 to reduce audio fatigue on repeated sounds
-void PlaySoundRandomisedPitch(Sound sound)
+void Audio::PlaySoundRandomisedPitch(SFXID id)
 {
 	constexpr int lowerPitch = 95;
 	constexpr int higherPitch = 105;
+	Sound& sound = m_audioSFX[static_cast<int>(id)];
 	RandomiseSoundPitch(lowerPitch, higherPitch, sound);
 	PlaySound(sound);
 }

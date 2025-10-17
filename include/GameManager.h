@@ -2,8 +2,8 @@
 
 #include <raylib.h>
 #include "Game.h"
-#include "UI.h"
 #include "Audio.h"
+#include "UI.h"
 
 #define SCREEN_WIDTH  (GAME_WIDTH + (2 * GAME_OFFSET)) 
 #define SCREEN_HEIGHT (GAME_HEIGHT + (2 * GAME_OFFSET))
@@ -30,7 +30,7 @@ private:
     UI m_gameOverUI {};
 
     // Audio
-    Sound m_audioSFX[SFX_COUNT];
+    Audio m_audio;
 
 public:
     GameManager();

@@ -2,6 +2,7 @@
 #define RENDERER_H
 
 #include "Game.h"
+#include "Ui.h"
 
 // Menu global constants
 #define TITLE_FONT_SIZE 40
