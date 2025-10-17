@@ -11,15 +11,15 @@ GameManager::GameManager()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
     SetTargetFPS(60);
-    LoadGameTextures();
-    UpdateWindowIcon(TILE_SIZE);
+    Assets::LoadGameTextures();
+    Assets::UpdateWindowIcon(TILE_SIZE);
     // init main menu since its first thing loaded
     InitMainMenuUI(&m_mainMenuUI);
 }
 
 GameManager::~GameManager()
 {
-    UnloadGameTextures();
+    Assets::UnloadGameTextures();
     CloseWindow();
 }
 

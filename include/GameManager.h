@@ -29,7 +29,6 @@ private:
     UI m_mainMenuUI {};
     UI m_gameOverUI {};
 
-    // Audio
     Audio m_audio;
 
 public:

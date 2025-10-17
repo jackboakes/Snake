@@ -66,17 +66,17 @@ static Rectangle GetHeadSpriteRect(Direction direction)
 {
     switch (direction)
     {
-    case DIR_NORTH: return GetSpriteRect(0,0, TILE_SIZE);  // head facing up
-    case DIR_WEST:  return GetSpriteRect(1, 0, TILE_SIZE);  // head facing left
-    case DIR_SOUTH: return GetSpriteRect(2, 0, TILE_SIZE);  // head facing down
-    case DIR_EAST:  return GetSpriteRect(3, 0, TILE_SIZE);  // head facing right
-    default:        return GetSpriteRect(0, 0, TILE_SIZE);  // default
+    case DIR_NORTH: return Assets::GetSpriteRect(0,0, TILE_SIZE);  // head facing up
+    case DIR_WEST:  return Assets::GetSpriteRect(1, 0, TILE_SIZE);  // head facing left
+    case DIR_SOUTH: return Assets::GetSpriteRect(2, 0, TILE_SIZE);  // head facing down
+    case DIR_EAST:  return Assets::GetSpriteRect(3, 0, TILE_SIZE);  // head facing right
+    default:        return Assets::GetSpriteRect(0, 0, TILE_SIZE);  // default
     }
 }
 
 static void DrawSnake(const Snake* snake)
 {
-    Texture2D snakeAtlas = GetSnakeAtlas();
+    Texture2D snakeAtlas = Assets::GetSnakeAtlas();
     for (int i = 1; i < snake->g_bodyPart.size(); i++) 
     {
         int pixelX = GAME_OFFSET + (snake->g_bodyPart[i].x * TILE_SIZE);
@@ -111,11 +111,11 @@ static void DrawFood(const Food* food)
 {
     int pixelX = GAME_OFFSET + (food->position.x * TILE_SIZE);
     int pixelY = GAME_OFFSET + (food->position.y * TILE_SIZE);
-    Texture2D snakeAtlas = GetSnakeAtlas();
+    Texture2D snakeAtlas = Assets::GetSnakeAtlas();
 
     if (snakeAtlas.id > 0)
     {
-        Rectangle foodRect = GetSpriteRect(0, 2, TILE_SIZE);
+        Rectangle foodRect = Assets::GetSpriteRect(0, 2, TILE_SIZE);
         Rectangle destRect = { (float)pixelX, (float)pixelY, (float)TILE_SIZE, (float)TILE_SIZE };
         DrawTexturePro(snakeAtlas, foodRect, destRect, { 0, 0 }, 0.0f, WHITE);
     }
