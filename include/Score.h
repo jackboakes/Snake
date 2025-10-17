@@ -1,11 +1,16 @@
-#ifndef SCORE_H
-#define SCORE_H
+#pragma once
 
-#define HIGHSCORE_FILE "highscore.txt"
+class Score
+{
+public:
+	int LoadHighScore();
+	bool SaveHighScore(int score);
+	void CheckAndUpdateHighScore(int currentScore, int* highScore);
+private:
+	const char* m_File { "highscore.txt" };
+};
 
 
-int LoadHighScore(void);
-bool SaveHighScore(int score);
-void CheckAndUpdateHighScore(int currentScore, int* highScore);
 
-#endif
+
+

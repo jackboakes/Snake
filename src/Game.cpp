@@ -80,7 +80,7 @@ void GameState::HandleFoodEat(Sound eatSound)
 void GameState::HandleGameOver(Sound collisionSound)
 {
     PlaySoundRandomisedPitch(collisionSound);
-    CheckAndUpdateHighScore(score, &highScore);
+    m_score.CheckAndUpdateHighScore(score, &highScore);
     isGameOver = true;
 }
 void GameState::GameLogic(Sound eatSound, Sound collisionSound)
@@ -100,7 +100,7 @@ void GameState::GameLogic(Sound eatSound, Sound collisionSound)
 
 GameState::GameState()
 {
-    highScore = LoadHighScore();
+    highScore = m_score.LoadHighScore();
     Reset();
 }
 

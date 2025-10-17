@@ -5,9 +5,9 @@
 Snake::Snake()
 {
     g_bodyPart.reserve(GRID_SIZE * GRID_SIZE - 1);
-    const int startLength { 4 };
-    const int leftX { startLength + 1 };
-    const int halfY { GRID_SIZE / 2 };
+    constexpr int startLength { 4 };
+    constexpr int leftX { startLength + 1 };
+    constexpr int halfY { GRID_SIZE / 2 };
 
     for (int i = 0; i < startLength; i++)
     {

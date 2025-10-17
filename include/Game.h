@@ -26,11 +26,10 @@ public:
     bool isGameOver { false };
 
 private:
-
     DirectionQueue m_directionQueue;
     float m_moveTimer { 0.0f };
     float m_moveInterval;
-
+    Score m_score;
 public:
     GameState();
 
