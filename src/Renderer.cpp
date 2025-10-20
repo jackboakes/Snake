@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "GameManager.h"
 #include "Renderer.h"
-#include "Game.h"
+#include "GameState.h"
 #include "Assets.h"
 #include "UI.h"
 

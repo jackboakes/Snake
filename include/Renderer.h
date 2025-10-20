@@ -1,7 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "Game.h"
+#include "GameState.h"
 #include "UI.h"
 
 // Menu global constants

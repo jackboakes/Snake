@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Input.h"
+#include "Food.h"
 #include "GameData.h"
 #include "Score.h"
 #include "Snake.h"
@@ -8,11 +9,6 @@
 #include "raylib.h"
 #include <vector>
 #include <queue>
-
-struct Food
-{
-    GridPosition position;
-};
 
 class GameState
 {
@@ -41,8 +37,6 @@ private:
     bool CheckSelfCollision(const Snake& snake);
 
     // TODO: Move this to a Food class?
-    void GameState::UpdateFood();
-    bool CheckFoodCollision(const Snake& snake, const Food& food);
     void HandleFoodEat(Audio& audio);
 
     void HandleGameOver(Audio& audio);

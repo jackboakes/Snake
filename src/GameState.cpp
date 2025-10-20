@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "GameState.h"
 #include "raylib.h"
 
 bool GameState::IsOppositeDirection(Direction dir1, Direction dir2)
@@ -11,7 +11,7 @@ bool GameState::IsOppositeDirection(Direction dir1, Direction dir2)
 
 bool GameState::CheckWallCollision(const Snake& snake)
 {
-    const GridPosition head = snake.g_bodyPart[0];
+    const GridPosition head { snake.g_bodyPart[0] };
 
     return (head.x == 0 || head.x == GRID_SIZE - 1 ||
         head.y == 0 || head.y == GRID_SIZE - 1);
@@ -19,9 +19,9 @@ bool GameState::CheckWallCollision(const Snake& snake)
 
 bool GameState::CheckSelfCollision(const Snake& snake)
 {
-    const GridPosition head = snake.g_bodyPart[0];
+    const GridPosition head { snake.g_bodyPart[0] };
 
-    for (int i = 1; i < snake.g_bodyPart.size(); i++) {
+    for (int i { 1 }; i < snake.g_bodyPart.size(); i++) {
         if (head.x == snake.g_bodyPart[i].x &&
             head.y == snake.g_bodyPart[i].y) {
             return true;
@@ -30,50 +30,13 @@ bool GameState::CheckSelfCollision(const Snake& snake)
     return false;
 }
 
-void GameState::UpdateFood()
-{
-    int collision = 0;
-
-    do
-    {
-        GridPosition newFoodPos = { 0 };
-
-        // Raylibs getrandom value
-        newFoodPos.x = GetRandomValue(1, GRID_SIZE - 2);  
-        newFoodPos.y = GetRandomValue(1, GRID_SIZE - 2);
-
-        collision = 0;
-        // Check for open space to spawn food
-        for (int i = 0; i < snake.g_bodyPart.size(); i++)
-        {
-            if (snake.g_bodyPart[i].x == newFoodPos.x &&
-                snake.g_bodyPart[i].y == newFoodPos.y)
-            {
-                collision = 1;
-                break;
-            }
-        }
-
-        if (!collision)
-        {
-            food.position.x = newFoodPos.x;
-            food.position.y = newFoodPos.y;
-        }
-    } while (collision);
-}
-
-bool GameState::CheckFoodCollision(const Snake& snake, const Food& food)
-{
-    return (food.position.x == snake.g_bodyPart[0].x &&
-        food.position.y == snake.g_bodyPart[0].y);
-}
 
 void GameState::HandleFoodEat(Audio& audio)
 {
     audio.PlaySoundRandomisedPitch(Audio::SFXID::EAT);
     snake.Grow();
     score += 5;
-    UpdateFood();
+    food.Spawn(snake);
 }
 
 void GameState::HandleGameOver(Audio& audio)
@@ -84,7 +47,7 @@ void GameState::HandleGameOver(Audio& audio)
 }
 void GameState::GameLogic(Audio& audio)
 {
-    if (CheckFoodCollision(snake, food))
+    if (food.CheckCollision(snake))
     {
         HandleFoodEat(audio);
     }
@@ -113,7 +76,7 @@ void GameState::Reset()
     m_moveTimer = 0.0f;
     m_directionQueue = {};
 
-    UpdateFood();
+    food.Spawn(snake);
 }
 
 void GameState::HandleInput(InputAction input)

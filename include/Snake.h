@@ -1,7 +1,7 @@
 #pragma once
-#include <vector>
 #include "GameData.h"
 #include "Input.h"
+#include <vector>
 
 class Snake
 {
