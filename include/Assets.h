@@ -1,18 +1,22 @@
-#ifndef ASSET_H
-#define ASSET_H
+#pragma once
 
-// Asset path util
-const char* GetAssetPath(const char* fileName);
+class Assets
+{
+public:
+	// Asset path util
+	static const char* GetAssetPath(const char* fileName);
 
-// Texture Management
-void LoadGameTextures();
-void UnloadGameTextures();
-void UpdateWindowIcon(int tileSize);
+	// Texture Management
+	static void LoadGameTextures();
+	static void UnloadGameTextures();
+	static void UpdateWindowIcon(int tileSize);
 
-// Sprite util
-Rectangle GetSpriteRect(int col, int row, float tileSize);
+	// Sprite util
+	static Rectangle GetSpriteRect(int col, int row, float tileSize);
 
-// Acesss snake atlas
-Texture2D GetSnakeAtlas();
+	// Acesss snake atlas
+	static Texture2D GetSnakeAtlas();
 
-#endif
+private:
+	static Texture2D m_snakeAtlas;
+};

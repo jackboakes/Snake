@@ -1,8 +1,6 @@
 #pragma once
 #include "Audio.h"
-
-#define MAX_BUTTONS 5
-#define MAX_BUTTON_TEXT_LENGTH 32
+#include <vector>
 
 enum MainMenuOption
 {
@@ -19,36 +17,45 @@ enum GameOverOption
 	GAME_OVER_OPTION_COUNT
 };
 
-struct Button
+class Button
 {
-	int id;
-	Rectangle bounds;
-	const char* text;
-	bool isHovered;
-	bool isPressed;
-	bool isReleased;
+public:
+	enum class State
+	{
+		DEFAULT,
+		HOVERED,
+		PRESSED,
+		RELEASED
+	};
+
+	Button();
+	void SetState(State newState);
+	Button::State GetState() const;
+
+	int id { -1 };
+	Rectangle bounds {};
+	const char* text {};
+private:
+	State m_state { State::DEFAULT };
 };
 
-struct UI
+class UI
 {
-	Button buttons[MAX_BUTTONS];
-	int buttonCount;
-	Vector2 mousePos;
-	bool mouseButtonDown;
-	bool mouseButtonReleased;
-	int activeButtonID;
+public:
+	UI();
+
+	void Update(Audio& audio);
+	void AddButton(int id, Rectangle bounds, const char* text);
+	std::vector<Button> GetButtons() const;
+	bool WasActiveButtonReleased(int buttonID);
+	void CentreButtonsVertically(int screenWidth, int screenHeight, int buttonWidth, int buttonHeight, int padding);
+
+private:
+	int m_activeButtonID { -1 };
+	std::vector<Button> m_buttons {};
+
+	Vector2 m_mousePos { 0, 0 };
+	bool m_mouseButtonDown { false };
+	bool m_mouseButtonReleased { false };
 };
 
-void InitMainMenuUI(UI* ui);
-void InitGameOverUI(UI* ui);
-void UpdateUI(UI* ui, Audio& audio);
-
-// Button functions
-void AddButton(UI* ui, Rectangle bounds, const char* text, int id);
-bool IsButtonActive(const UI* ui, int buttonId);
-Button* GetButton(const UI* ui, int buttonId);
-bool WasActiveButtonReleased(const UI* ui, int buttonId);
-
-// Layout Helpers
-void CenterButtonsVertically(UI* ui, int screenWidth, int screenHeight, int buttonWidth, int buttonHeight, int padding);
-void PositionButton(UI* ui, int buttonIndex, int x, int y, int width, int height);

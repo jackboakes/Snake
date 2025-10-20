@@ -2,151 +2,112 @@
 #include "UI.h"
 
 
+Button::Button() = default;
 
-void InitMainMenuUI(UI* ui)
+void Button::SetState(State newState)
 {
-    ui->buttonCount = 0;
-    ui->mousePos = { 0, 0 };
-    ui->mouseButtonDown = false;
-    ui->mouseButtonReleased = false;
-    ui->activeButtonID = 0;
-
-    const int buttonWidth = 32 * 9;
-    const int buttonHeight = 32 * 2;
-    const int buttonPadding = 20;
-    const int screenWidth = GetScreenWidth();
-    const int screenHeight = GetScreenHeight();
-
-    Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
-
-    AddButton(ui, buttonBounds, "Start Game", MAIN_MENU_START);
-    AddButton(ui, buttonBounds, "Quit", MAIN_MENU_QUIT);
-
-    CenterButtonsVertically(ui, screenWidth, screenHeight, buttonWidth, buttonHeight, buttonPadding);
-}
-
-void InitGameOverUI(UI* ui)
-{
-    ui->buttonCount = 0;
-    ui->mousePos = { 0, 0 };
-    ui->mouseButtonDown = false;
-    ui->mouseButtonReleased = false;
-    ui->activeButtonID = 0;
-
-    const int buttonWidth = 32 * 9;
-    const int buttonHeight = 32 * 2;
-    const int buttonPadding = 20;
-    const int screenWidth = GetScreenWidth();
-    const int screenHeight = GetScreenHeight();
-    Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
-
-    AddButton(ui, buttonBounds, "Main Menu", GAME_OVER_MAIN_MENU);
-    AddButton(ui, buttonBounds, "Restart", GAME_OVER_RESTART);
-    AddButton(ui, buttonBounds, "Quit", GAME_OVER_QUIT);
-
-    CenterButtonsVertically(ui, screenWidth, screenHeight, buttonWidth, buttonHeight, buttonPadding);
-}
-
-
-void UpdateUI(UI* ui, Audio& audio)
-{
-	ui->mousePos = GetMousePosition();
-    ui->mouseButtonDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
-	ui->mouseButtonReleased = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
-
-    ui->activeButtonID = -1;
-
-    for (int i = 0; i < ui->buttonCount; i++)
+    if (m_state != newState)
     {
-        Button* button = &ui->buttons[i];
+        m_state = newState;
+    }
+}
 
-        // reset state
-        button->isHovered = false;
-        button->isPressed = false;
-        button->isReleased = false;
+Button::State Button::GetState() const
+{
+    return m_state;
+}
+
+UI::UI() = default;
+
+void UI::Update( Audio& audio)
+{
+	m_mousePos = GetMousePosition();
+    m_mouseButtonDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+	m_mouseButtonReleased = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
+
+    //reset active id
+    m_activeButtonID = -1;
+
+    for (int i = 0; i < m_buttons.size(); i++)
+    {
+        Button& button { m_buttons[i] };
+        Button::State nextState { Button::State::DEFAULT };
 
         // Check if mouse is over button
-        if (CheckCollisionPointRec(ui->mousePos, button->bounds))
+        if (CheckCollisionPointRec(m_mousePos, button.bounds))
         {
-            button->isHovered = true;
-            ui->activeButtonID = button->id;
+            nextState = Button::State::HOVERED;
+            m_activeButtonID = button.id;
 
-            if (ui->mouseButtonDown)
+            if (m_mouseButtonDown)
             {
 
-                button->isPressed = true;
+                nextState = Button::State::PRESSED;
             }
 
-            if (ui->mouseButtonReleased)
+            if (m_mouseButtonReleased)
             {
                 audio.PlaySoundRandomisedPitch(Audio::SFXID::MENU_BUTTON);
-                button->isReleased = true;
+                nextState = Button::State::RELEASED;
             }
-
         }
+
+        button.SetState(nextState);
     }
 }
 
-void AddButton(UI* ui, Rectangle bounds, const char* text, int id)
+void UI::AddButton(int id, Rectangle bounds, const char* text)
 {
-    if (ui->buttonCount >= MAX_BUTTONS) return;
-    if (GetButton(ui, id) != NULL) return;
-  
+    Button newButton {};
+    newButton.bounds = bounds;
+    newButton.id = id;
+    newButton.text = text;
+    newButton.SetState(Button::State::DEFAULT);
 
-    int index = ui->buttonCount++;
-    Button* button = &ui->buttons[index];
-
-    button->id = id;
-    button->bounds = bounds;
-    button->text = text;
-    button->isHovered = false;
-    button->isPressed = false;
+    m_buttons.push_back(newButton);
 }
 
-bool IsButtonActive(const UI* ui, int buttonId)
+std::vector<Button> UI::GetButtons() const
 {
-    return ui->activeButtonID == buttonId;
+    return m_buttons;
 }
 
-
-Button* GetButton(const UI* ui, int buttonId)
+// Checks if a button is released while active
+// To be active and released the button needs to 
+// be hovered over (active button) and then released 
+bool UI::WasActiveButtonReleased(int buttonID)
 {
-    for (int i = 0; i < ui->buttonCount; i++)
-    {
-        if (ui->buttons[i].id == buttonId)
-        {
-            return (Button*)&ui->buttons[i];
-        }
-    }
-    return NULL;
-}
-
-// needs to be hovered and released on the button
-bool WasActiveButtonReleased(const UI* ui, int buttonId)
-{
-    if (!IsButtonActive(ui, buttonId))
-        return false;
-
-    Button* button = GetButton(ui, buttonId);
-    if (button == NULL)
+    if (m_activeButtonID != buttonID)
     {
         return false;
     }
 
-    return button->isReleased;
+    if (buttonID < 0 && buttonID > m_buttons.size())
+    {
+        return false;
+    }
+
+    Button& button { m_buttons[buttonID] };
+    Button::State buttonState { button.GetState() };
+
+    return buttonState == Button::State::RELEASED;
 }
 
-void CenterButtonsVertically(UI* ui, int screenWidth, int screenHeight, int buttonWidth, int buttonHeight, int padding)
+void UI::CentreButtonsVertically(int screenWidth, int screenHeight, int buttonWidth, int buttonHeight, int padding)
 {
-    if (ui->buttonCount == 0) return;
+    if (m_buttons.size() == 0)
+    {
+        return;
+    }
 
-    const int totalButtonsHeight = (ui->buttonCount * buttonHeight) +
-        ((ui->buttonCount - 1) * padding);
+    const int totalButtonsHeight = (m_buttons.size() * buttonHeight) +
+        ((m_buttons.size() - 1) * padding);
     const int startY = (screenHeight / 2) - (totalButtonsHeight / 2);
 
-    for (int i = 0; i < ui->buttonCount; i++)
+    // update new button positions
+    for (int i = 0; i < m_buttons.size(); i++)
     {
-        ui->buttons[i].bounds = {
+        m_buttons[i].bounds = {
             (screenWidth / 2.0f) - (buttonWidth / 2.0f),
             (float) startY + (i * (buttonHeight + padding)),
             (float) buttonWidth,
@@ -155,16 +116,6 @@ void CenterButtonsVertically(UI* ui, int screenWidth, int screenHeight, int butt
     }
 }
 
-void PositionButton(UI* ui, int buttonId, int x, int y, int width, int height)
-{
-    Button* button = GetButton(ui, buttonId);
-    if (button != NULL)
-    {
-        button->bounds = {
-            (float)x, (float)y, (float)width, (float)height
-        };
-    }
-}
 
 
 

@@ -27,7 +27,8 @@ endif()
 
 # Header files
 set(HEADERS
-    include/Game.h
+    include/Food.h
+    include/GameState.h
     include/GameData.h
     include/GameManager.h
     include/Renderer.h
@@ -42,8 +43,8 @@ set(HEADERS
 # Source files
 set(SOURCES
     src/Main.cpp
-    src/Game.cpp
-    src/GameData.cpp
+    src/Food.cpp
+    src/GameState.cpp
     src/GameManager.cpp
     src/Renderer.cpp
     src/Input.cpp

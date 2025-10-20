@@ -1,24 +1,24 @@
 #include "raylib.h"
 #include "Assets.h"
 
-static Texture2D snakeAtlas = { 0 };
 
+Texture2D Assets::m_snakeAtlas = { 0 };
 
 // Constructs the full path to the asset file by combining the .exe directory
 // with a path to the asset folder.
 // Utilises GetApplicationDirectory() from raylib and traverses up two folder levels to root.
 // Works for both running from cmd line with build\debug or release\snake.exe,
 // and double clicking the .exe directly.
-const char* GetAssetPath(const char* fileName)
+const char* Assets::GetAssetPath(const char* fileName)
 {
     return TextFormat("%s../../assets/%s", GetApplicationDirectory(), fileName);
 }
 
-void LoadGameTextures()
+void Assets::LoadGameTextures()
 {
-    snakeAtlas = LoadTexture(GetAssetPath("snake_atlas.png"));
+    m_snakeAtlas = LoadTexture(GetAssetPath("snake_atlas.png"));
 
-    if (snakeAtlas.id > 0)
+    if (m_snakeAtlas.id > 0)
     {
         TraceLog(LOG_INFO, "Snake atlas loaded successfully");
     }
@@ -28,19 +28,22 @@ void LoadGameTextures()
     }
 }
 
-void UnloadGameTextures()
+void Assets::UnloadGameTextures()
 {
-    if (snakeAtlas.id > 0)
+    if (m_snakeAtlas.id > 0)
     {
-        UnloadTexture(snakeAtlas);
+        UnloadTexture(m_snakeAtlas);
     }
 }
 
 // Sets the icon for the window using image from our atlas
-void UpdateWindowIcon(int tileSize)
+void Assets::UpdateWindowIcon(int tileSize)
 {
-    Image fullSnakeAtlas = LoadImageFromTexture(snakeAtlas);
-    if (!fullSnakeAtlas.data) return;
+    Image fullSnakeAtlas = LoadImageFromTexture(m_snakeAtlas);
+    if (!fullSnakeAtlas.data)
+    {
+        return;
+    }
     Rectangle iconSpriteRect = GetSpriteRect(2, 0, tileSize); // South facing head
     Image windowIcon = ImageFromImage(fullSnakeAtlas, iconSpriteRect);
     UnloadImage(fullSnakeAtlas);
@@ -50,7 +53,7 @@ void UpdateWindowIcon(int tileSize)
 }
 
 // Helper function to get a 32x32 sprite from the atlas by index
-Rectangle GetSpriteRect(int col, int row, float tileSize)
+Rectangle Assets::GetSpriteRect(int col, int row, float tileSize)
 {
     Rectangle spriteRect;
     spriteRect = {
@@ -63,15 +66,13 @@ Rectangle GetSpriteRect(int col, int row, float tileSize)
     return  spriteRect;
 }
 
-
-
-Texture2D GetSnakeAtlas()
+Texture2D Assets::GetSnakeAtlas()
 {
-    if (snakeAtlas.id > 0)
+    if (m_snakeAtlas.id > 0)
     {
-        return snakeAtlas;
+        return m_snakeAtlas;
     }
-    //if we get here it will return a zerod texture
+    // If we get here it will return a zerod texture
     Texture2D debugTexture = { 0 };
     TraceLog(LOG_WARNING, "Failed to get snake atlas");
     return debugTexture;

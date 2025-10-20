@@ -1,44 +1,23 @@
-#ifndef INPUT_H
-#define INPUT_H
+#pragma once
 
+constexpr int INPUT_QUEUE_SIZE { 2 };
 
-#define INPUT_QUEUE_SIZE 2
-
-enum InputAction
+enum class InputAction
 {
-	INPUT_NONE = 0,
-	INPUT_UP,
-	INPUT_LEFT,
-	INPUT_DOWN,
-	INPUT_RIGHT
+	NONE = 0,
+	UP,
+	LEFT,
+	DOWN,
+	RIGHT
 };
 
-enum Direction
+enum class Direction
 {
-	DIR_NONE = 0,
-	DIR_NORTH,
-	DIR_WEST,
-	DIR_SOUTH,
-	DIR_EAST
+	NONE = 0,
+	NORTH,
+	WEST,
+	SOUTH,
+	EAST
 };
-
-struct DirectionQueue
-{
-	Direction dirValues[INPUT_QUEUE_SIZE];
-	int head;
-	int tail;
-	int count;
-};
-
 
 InputAction ReadGameInput();
-
-// Input direction queue
-void InitDirectionQueue(DirectionQueue* queue);
-bool DirectionQueueEmpty(DirectionQueue* queue);
-bool DirectionQueueFull(DirectionQueue* queue);
-bool EnqueueDirection(DirectionQueue* queue, Direction dir);
-Direction DequeueDirection(DirectionQueue* queue);
-Direction GetNextDirection(DirectionQueue* queue);
-
-#endif

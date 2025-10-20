@@ -1,16 +1,14 @@
-
 #include "Audio.h"
 #include "Assets.h" // get asset path helper
-
 
 
 Audio::Audio()
 {
 	InitAudioDevice();
 
-	m_audioSFX[static_cast<int>(SFXID::EAT)] = LoadSound(GetAssetPath("sfx_snake_eat.wav"));
-	m_audioSFX[static_cast<int>(SFXID::COLLISION)] = LoadSound(GetAssetPath("sfx_snake_collision.wav"));
-	m_audioSFX[static_cast<int>(SFXID::MENU_BUTTON)] = LoadSound(GetAssetPath("sfx_menu_button_pressed.wav"));
+	m_audioSFX[static_cast<int>(SFXID::EAT)] = LoadSound(Assets::GetAssetPath("sfx_snake_eat.wav"));
+	m_audioSFX[static_cast<int>(SFXID::COLLISION)] = LoadSound(Assets::GetAssetPath("sfx_snake_collision.wav"));
+	m_audioSFX[static_cast<int>(SFXID::MENU_BUTTON)] = LoadSound(Assets::GetAssetPath("sfx_menu_button_pressed.wav"));
 }
 
 Audio::~Audio()
