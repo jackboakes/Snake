@@ -1,13 +1,13 @@
 #include "raylib.h"
 #include "Score.h"
 
-int LoadHighScore(void)
+int Score::LoadHighScore()
 {
     int highScore = 0;
 
-    if (FileExists(HIGHSCORE_FILE))
+    if (FileExists(m_File))
     {
-        char* fileText = LoadFileText(HIGHSCORE_FILE);
+        char* fileText = LoadFileText(m_File);
 
         if (fileText != NULL)
         {
@@ -24,15 +24,15 @@ int LoadHighScore(void)
     return highScore;
 }
 
-bool SaveHighScore(int score)
+bool Score::SaveHighScore(int score)
 {
     char scoreText[32];
     TextCopy(scoreText, TextFormat("%d", score));
 
-    return SaveFileText(HIGHSCORE_FILE, scoreText);
+    return SaveFileText(m_File, scoreText);
 }
 
-void CheckAndUpdateHighScore(int currentScore, int* highScore)
+void Score::CheckAndUpdateHighScore(int currentScore, int* highScore)
 {
     if (currentScore > *highScore)
     {

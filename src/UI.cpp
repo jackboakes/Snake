@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "UI.h"
-#include "Renderer.h"
-#include "Audio.h"
+
 
 
 void InitMainMenuUI(UI* ui)
@@ -49,7 +48,7 @@ void InitGameOverUI(UI* ui)
 }
 
 
-void UpdateUI(UI* ui, Sound buttonSound)
+void UpdateUI(UI* ui, Audio& audio)
 {
 	ui->mousePos = GetMousePosition();
     ui->mouseButtonDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
@@ -80,7 +79,7 @@ void UpdateUI(UI* ui, Sound buttonSound)
 
             if (ui->mouseButtonReleased)
             {
-                PlaySoundRandomisedPitch(buttonSound);
+                audio.PlaySoundRandomisedPitch(Audio::SFXID::MENU_BUTTON);
                 button->isReleased = true;
             }
 

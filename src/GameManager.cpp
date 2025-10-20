@@ -4,145 +4,138 @@
 #include "Renderer.h"
 #include "Audio.h"
 #include "Assets.h"
-#include "UI.h"
 
 
-void InitGameManager(GameManager* gameManager)
+
+GameManager::GameManager()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
     SetTargetFPS(60);
-    InitAudio(gameManager->audioSFX);
     LoadGameTextures();
     UpdateWindowIcon(TILE_SIZE);
-    gameManager->shouldQuit = false;
-    gameManager->currentState = STATE_MAIN_MENU;
-    gameManager->nextState = STATE_MAIN_MENU;
     // init main menu since its first thing loaded
-    InitMainMenuUI(&gameManager->mainMenuUI);
+    InitMainMenuUI(&m_mainMenuUI);
 }
 
-void ShutdownGameManager(GameManager* gameManager)
+GameManager::~GameManager()
 {
     UnloadGameTextures();
-    ShutdownAudio(gameManager->audioSFX);
     CloseWindow();
 }
 
-
-
-static void UpdateMainMenu(GameManager* gameManager)
+void GameManager::UpdateMainMenu()
 {
     // data
-    UpdateUI(&gameManager->mainMenuUI, gameManager->audioSFX[SFX_MENU_BUTTON]);
+    UpdateUI(&m_mainMenuUI, m_audio);
     
     // logic
-    if (WasActiveButtonReleased(&gameManager->mainMenuUI, MAIN_MENU_START))
+    if (WasActiveButtonReleased(&m_mainMenuUI, MAIN_MENU_START))
     {
-        gameManager->nextState = STATE_PLAYING;
+        m_nextState = State::STATE_PLAYING;
     }
 
-    if (WasActiveButtonReleased(&gameManager->mainMenuUI, MAIN_MENU_QUIT))
+    if (WasActiveButtonReleased(&m_mainMenuUI, MAIN_MENU_QUIT))
     {
-        gameManager->nextState = STATE_QUIT;
+        m_nextState = State::STATE_QUIT;
     }
 
     // Render
-    RenderMainMenu(&gameManager->mainMenuUI);
+    RenderMainMenu(&m_mainMenuUI);
 }
 
-static void UpdateGameplay(GameManager* gameManager)
+void GameManager::UpdateGameplay()
 {
     float deltaTime = GetFrameTime();
 
     // Input
     InputAction input = ReadGameInput();
-    HandleSnakeInput(&gameManager->gameState.snake, input);
+    m_gameState.HandleInput(input);
 
     // Update
-    UpdateGame(&gameManager->gameState, deltaTime, gameManager->audioSFX[SFX_EAT], gameManager->audioSFX[SFX_COLLISION]);
+    m_gameState.UpdateGame(deltaTime, m_audio);
 
-    // Check transitions
-    if (gameManager->gameState.isGameOver)
+    // If game is over no need to render next frame
+    if (m_gameState.isGameOver)
     {
-        gameManager->nextState = STATE_GAME_OVER;
+        m_nextState = State::STATE_GAME_OVER;
+        return;
     }
 
     // Render
-    RenderGameplay(&gameManager->gameState);
+    RenderGameplay(&m_gameState);
 }
 
-static void UpdateGameOver(GameManager* gameManager)
+void GameManager::UpdateGameOver()
 {
-    UpdateUI(&gameManager->gameOverUI, gameManager->audioSFX[SFX_MENU_BUTTON]);
+    UpdateUI(&m_gameOverUI, m_audio);
 
-    
-    if (WasActiveButtonReleased(&gameManager->gameOverUI, GAME_OVER_MAIN_MENU))
+    if (WasActiveButtonReleased(&m_gameOverUI, GAME_OVER_MAIN_MENU))
     {
-        gameManager->nextState = STATE_MAIN_MENU;
+        m_nextState = State::STATE_MAIN_MENU;
     }
 
-    if (WasActiveButtonReleased(&gameManager->gameOverUI, GAME_OVER_RESTART))
+    if (WasActiveButtonReleased(&m_gameOverUI, GAME_OVER_RESTART))
     {
-        gameManager->nextState = STATE_PLAYING;
+        m_nextState = State::STATE_PLAYING;
     }
 
-    if (WasActiveButtonReleased(&gameManager->gameOverUI, GAME_OVER_QUIT))
+    if (WasActiveButtonReleased(&m_gameOverUI, GAME_OVER_QUIT))
     {
-        gameManager->nextState = STATE_QUIT;
+        m_nextState = State::STATE_QUIT;
     }
 
     // Render
-    RenderGameOver(&gameManager->gameOverUI, gameManager->gameState.score, gameManager->gameState.highScore);
+    RenderGameOver(&m_gameOverUI, m_gameState.score, m_gameState.highScore);
 }
 
 // Any cleanup from old state could go here
-static void SetGameManagerState(GameManager* gameManager, GameStateID newStateID)
+void GameManager::SetGameManagerState(State newState)
 {
-    gameManager->currentState = newStateID;
+    m_currentState = newState;
 
     // Any initialization for new state could go here
-    switch (newStateID)
+    switch (newState)
     {
-    case STATE_MAIN_MENU:
-        InitMainMenuUI(&gameManager->mainMenuUI);
+    case State::STATE_MAIN_MENU:
+        InitMainMenuUI(&m_mainMenuUI);
         break;
-    case STATE_PLAYING:
-        InitGame(&gameManager->gameState);
+    case State::STATE_PLAYING:
+        m_gameState.Reset();
         break;
-    case STATE_GAME_OVER:
-        InitGameOverUI(&gameManager->gameOverUI);
+    case State::STATE_GAME_OVER:
+        InitGameOverUI(&m_gameOverUI);
         break;
-    case STATE_QUIT:
-        gameManager->shouldQuit = true;
+    case State::STATE_QUIT:
+        m_shouldQuit = true;
         break;
     }
 }
 
-void RunGameManager(GameManager* gameManager)
+void GameManager::Run()
 {
     // Main game loop
-    while (!gameManager->shouldQuit && !WindowShouldClose())
+    while (!m_shouldQuit && !WindowShouldClose())
     {
         // Handle state transitions
-        if (gameManager->nextState != gameManager->currentState)
+        if (m_nextState != m_currentState)
         {
-            SetGameManagerState(gameManager, gameManager->nextState);
+            SetGameManagerState(m_nextState);
         }
 
         // Update the current state
-        switch (gameManager->currentState)
+        switch (m_currentState)
         {
-        case STATE_MAIN_MENU:
-            UpdateMainMenu(gameManager);
+        case State::STATE_MAIN_MENU:
+            UpdateMainMenu();
             break;
-        case STATE_PLAYING:
-            UpdateGameplay(gameManager);
+        case State::STATE_PLAYING:
+            UpdateGameplay();
             break;
-        case STATE_GAME_OVER:
-            UpdateGameOver(gameManager);
+        case State::STATE_GAME_OVER:
+            UpdateGameOver();
             break;
-        case STATE_QUIT:
-            gameManager->shouldQuit = true;
+        case State::STATE_QUIT:
+            m_shouldQuit = true;
             break;
         }
     }

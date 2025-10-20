@@ -77,21 +77,21 @@ static Rectangle GetHeadSpriteRect(Direction direction)
 static void DrawSnake(const Snake* snake)
 {
     Texture2D snakeAtlas = GetSnakeAtlas();
-    for (int i = 1; i < snake->length; i++) 
+    for (int i = 1; i < snake->g_bodyPart.size(); i++) 
     {
-        int pixelX = GAME_OFFSET + (snake->bodyPart[i].position.x * TILE_SIZE);
-        int pixelY = GAME_OFFSET + (snake->bodyPart[i].position.y * TILE_SIZE);
+        int pixelX = GAME_OFFSET + (snake->g_bodyPart[i].x * TILE_SIZE);
+        int pixelY = GAME_OFFSET + (snake->g_bodyPart[i].y * TILE_SIZE);
 
         DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, snakeColour);
     }
 
-    int headX = GAME_OFFSET + (int)(snake->bodyPart[0].position.x * TILE_SIZE);
-    int headY = GAME_OFFSET + (int)(snake->bodyPart[0].position.y * TILE_SIZE);
+    int headX = GAME_OFFSET + (int)(snake->g_bodyPart[0].x * TILE_SIZE);
+    int headY = GAME_OFFSET + (int)(snake->g_bodyPart[0].y * TILE_SIZE);
 
     if (snakeAtlas.id > 0)
     {
         // Get the correct sprite rectangle for the snake's direction
-        Rectangle sourceRect = GetHeadSpriteRect(snake->currentDirection);
+        Rectangle sourceRect = GetHeadSpriteRect(snake->g_currentDirection);
 
         // Destination rectangle (where to draw on screen)
         Rectangle destRect = { (float)headX, (float)headY, (float)TILE_SIZE, (float)TILE_SIZE};
@@ -140,10 +140,10 @@ void RenderGameplay(GameState* gameState)
 // with a light colour in the top and left border, and darker in the bottom and right
 void DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColour, Color darkColour)
 {
-    Rectangle top = { borderRec.x, borderRec.y, borderRec.width, borderThickness };
-    Rectangle bottom = { borderRec.x, borderRec.y + borderRec.height - borderThickness, borderRec.width, borderThickness };
-    Rectangle left = { borderRec.x, borderRec.y + borderThickness, borderThickness, borderRec.height - (2 * borderThickness) };
-    Rectangle right = { borderRec.x + borderRec.width - borderThickness, borderRec.y + borderThickness, borderThickness, borderRec.height - (2 * borderThickness) };
+    Rectangle top = { borderRec.x, borderRec.y, borderRec.width, (float)borderThickness };
+    Rectangle bottom = { borderRec.x, borderRec.y + borderRec.height - (float)borderThickness, borderRec.width, (float)borderThickness };
+    Rectangle left = { borderRec.x, borderRec.y + (float)borderThickness, (float)borderThickness, borderRec.height - (2 * (float)borderThickness) };
+    Rectangle right = { borderRec.x + borderRec.width - (float)borderThickness, borderRec.y + (float)borderThickness, (float)borderThickness, borderRec.height - (2 * (float)borderThickness) };
 
     DrawRectangleRec(top, lightColour);
     DrawRectangleRec(bottom, darkColour);
@@ -163,8 +163,8 @@ void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Colo
 
 static void DrawCenteredTitle(const char* title, int y, int fontSize, Color color)
 {
-    const int fontSpacing = fontSize / 10;
-    const int titleWidth = MeasureTextEx(GetFontDefault(), title, fontSize, fontSpacing).x;
+    const float fontSpacing = (float)fontSize / 10.0f;
+    const int titleWidth = MeasureTextEx(GetFontDefault(), title, (float)fontSize, fontSpacing).x;
     const int titlePosX = (GetScreenWidth() / 2) - (titleWidth / 2);
 
     DrawTextWithShadow(title, titlePosX, y, fontSize, color);
@@ -173,8 +173,8 @@ static void DrawCenteredTitle(const char* title, int y, int fontSize, Color colo
 static void RenderButton(const Button* button)
 {
     const int borderWidth = 5;
-    const int fontSize = 25;
-    const int fontSpacing = fontSize / 10;
+    const float fontSize = 25.0f;
+    const float fontSpacing = fontSize / 10.0f;
 
     const int textWidth = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).x;
     const int textHeight = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).y;
