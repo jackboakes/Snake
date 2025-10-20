@@ -3,7 +3,7 @@
 
 
 
-A classic Snake game implemented in C-Style C++ using Raylib.
+A classic Snake game implemented in C++ 17 using Raylib.
 All visual artwork and sound effects were created by me.
 <p align="center">
 <img width="260" height="auto" alt="snake_menu" src="https://github.com/user-attachments/assets/a80eb2b8-fbb5-4853-9227-a1088e65bece" />

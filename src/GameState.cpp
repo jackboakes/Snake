@@ -43,7 +43,7 @@ void GameState::HandleFoodEat(Audio& audio)
 void GameState::HandleGameOver(Audio& audio)
 {
     audio.PlaySoundRandomisedPitch(Audio::SFXID::COLLISION);
-    m_score.CheckAndUpdateHighScore(score, &highScore);
+    m_score.CheckAndUpdateHighScore(score, highScore);
     isGameOver = true;
 }
 void GameState::GameLogic(Audio& audio)

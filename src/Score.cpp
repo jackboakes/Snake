@@ -33,14 +33,14 @@ bool Score::SaveHighScore(int score)
     return SaveFileText(m_File, scoreText);
 }
 
-void Score::CheckAndUpdateHighScore(int currentScore, int* highScore)
+void Score::CheckAndUpdateHighScore(int currentScore, int& highScore)
 {
-    if (currentScore > *highScore)
+    if (currentScore > highScore)
     {
-        *highScore = currentScore;
-        if (!SaveHighScore(*highScore)) {
+        highScore = currentScore;
+        if (!SaveHighScore(highScore)) {
             TraceLog(LOG_WARNING, "Failed to save high score");
         }
-        SaveHighScore(*highScore);
+        SaveHighScore(highScore);
     }
 }
