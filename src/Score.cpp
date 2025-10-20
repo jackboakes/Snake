@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "Score.h"
 
+
 int Score::LoadHighScore()
 {
     int highScore = 0;
@@ -11,7 +12,7 @@ int Score::LoadHighScore()
 
         if (fileText != NULL)
         {
-            highScore = TextToInteger(fileText); // replaced stoi
+            highScore = TextToInteger(fileText); 
             UnloadFileText(fileText);
         }
     }

@@ -1,6 +1,7 @@
 #include "food.h"
 #include "raylib.h"
 
+
 Food::Food()
 {
     position = { 0, 0 };
@@ -18,10 +19,10 @@ void Food::Spawn(const Snake& snake)
 
         collision = false;
         // Check for open space to spawn food
-        for (int i { 0 }; i < snake.g_bodyPart.size(); i++)
+        for (int i { 0 }; i < snake.bodyPart.size(); i++)
         {
-            if (snake.g_bodyPart[i].x == newFoodPos.x &&
-                snake.g_bodyPart[i].y == newFoodPos.y)
+            if (snake.bodyPart[i].x == newFoodPos.x &&
+                snake.bodyPart[i].y == newFoodPos.y)
             {
                 collision = true;
                 break;
@@ -38,7 +39,7 @@ void Food::Spawn(const Snake& snake)
 
 bool Food::CheckCollision(const Snake& snake)
 {
-    return (position.x == snake.g_bodyPart[0].x &&
-        position.y == snake.g_bodyPart[0].y);
+    return (position.x == snake.bodyPart[0].x &&
+        position.y == snake.bodyPart[0].y);
 }
 

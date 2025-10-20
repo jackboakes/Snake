@@ -1,18 +1,22 @@
 #pragma once
 
-namespace Assets
+class Assets
 {
+public:
 	// Asset path util
-	const char* GetAssetPath(const char* fileName);
+	static const char* GetAssetPath(const char* fileName);
 
 	// Texture Management
-	void LoadGameTextures();
-	void UnloadGameTextures();
-	void UpdateWindowIcon(int tileSize);
+	static void LoadGameTextures();
+	static void UnloadGameTextures();
+	static void UpdateWindowIcon(int tileSize);
 
 	// Sprite util
-	Rectangle GetSpriteRect(int col, int row, float tileSize);
+	static Rectangle GetSpriteRect(int col, int row, float tileSize);
 
 	// Acesss snake atlas
-	Texture2D GetSnakeAtlas();
-}
+	static Texture2D GetSnakeAtlas();
+
+private:
+	static Texture2D m_snakeAtlas;
+};

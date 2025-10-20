@@ -6,10 +6,11 @@
 #include "Assets.h"
 
 
-
 GameManager::GameManager()
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
+    constexpr int screenWidth { (GAME_WIDTH + (2 * GAME_OFFSET)) };
+    constexpr int screenHeight { (GAME_HEIGHT + (2 * GAME_OFFSET)) };
+    InitWindow(screenWidth, screenHeight, "Snake");
     SetTargetFPS(60);
     Assets::LoadGameTextures();
     Assets::UpdateWindowIcon(TILE_SIZE);
@@ -18,8 +19,6 @@ GameManager::GameManager()
     const int buttonWidth { 32 * 9 };
     const int buttonHeight { 32 * 2 };
     const int buttonPadding { 20 };
-    const int screenWidth { GetScreenWidth() };
-    const int screenHeight { GetScreenHeight() };
 
     Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
 
@@ -52,7 +51,7 @@ void GameManager::UpdateMainMenu()
     }
 
     // Render
-    RenderMainMenu(m_mainMenuUI);
+    Renderer::MainMenu(m_mainMenuUI);
 }
 
 void GameManager::UpdateGameplay()
@@ -74,7 +73,7 @@ void GameManager::UpdateGameplay()
     }
 
     // Render
-    RenderGameplay(&m_gameState);
+    Renderer::Gameplay(m_gameState);
 }
 
 void GameManager::UpdateGameOver()
@@ -97,7 +96,7 @@ void GameManager::UpdateGameOver()
     }
 
     // Render
-    RenderGameOver(m_gameOverUI, m_gameState.score, m_gameState.highScore);
+    Renderer::GameOver(m_gameOverUI, m_gameState.score, m_gameState.highScore);
 }
 
 // Any cleanup from old state could go here

@@ -6,12 +6,10 @@
 class Snake
 {
 public:
-    std::vector<GridPosition> g_bodyPart;
-    Direction g_currentDirection { Direction::EAST };
-    float g_moveSpeed { 10.0f };
-private:
+    std::vector<GridPosition> bodyPart;
+    Direction currentDirection { Direction::EAST };
+    float moveSpeed { 10.0f };
 
-public:
     Snake();
     void Update(Direction nextDirection);
     void Grow();

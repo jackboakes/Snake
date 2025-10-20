@@ -19,18 +19,17 @@ public:
     int highScore { 0 };
     bool isGameOver { false };
 
+    GameState();
+    void Reset();
+    void HandleInput(InputAction input);
+    void UpdateGame(float deltaTime, Audio& audio);
+
 private:
     std::queue<Direction> m_directionQueue;
     float m_moveTimer { 0.0f };
     float m_moveInterval;
     Score m_score;
-public:
-    GameState();
 
-    void Reset();
-    void HandleInput(InputAction input);
-    void UpdateGame(float deltaTime, Audio& audio);
-private:
     bool IsOppositeDirection(Direction dir1, Direction dir2);
 
     bool CheckWallCollision(const Snake& snake);

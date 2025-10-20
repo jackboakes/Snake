@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include "raylib.h"
 
+
 bool GameState::IsOppositeDirection(Direction dir1, Direction dir2)
 {
     return (dir1 == Direction::NORTH && dir2 == Direction::SOUTH) ||
@@ -11,7 +12,7 @@ bool GameState::IsOppositeDirection(Direction dir1, Direction dir2)
 
 bool GameState::CheckWallCollision(const Snake& snake)
 {
-    const GridPosition head { snake.g_bodyPart[0] };
+    const GridPosition head { snake.bodyPart[0] };
 
     return (head.x == 0 || head.x == GRID_SIZE - 1 ||
         head.y == 0 || head.y == GRID_SIZE - 1);
@@ -19,11 +20,11 @@ bool GameState::CheckWallCollision(const Snake& snake)
 
 bool GameState::CheckSelfCollision(const Snake& snake)
 {
-    const GridPosition head { snake.g_bodyPart[0] };
+    const GridPosition head { snake.bodyPart[0] };
 
-    for (int i { 1 }; i < snake.g_bodyPart.size(); i++) {
-        if (head.x == snake.g_bodyPart[i].x &&
-            head.y == snake.g_bodyPart[i].y) {
+    for (int i { 1 }; i < snake.bodyPart.size(); i++) {
+        if (head.x == snake.bodyPart[i].x &&
+            head.y == snake.bodyPart[i].y) {
             return true;
         }
     }
@@ -72,7 +73,7 @@ void GameState::Reset()
     score = 0;
     snake = Snake();
 
-    m_moveInterval = 1.0f / snake.g_moveSpeed;
+    m_moveInterval = 1.0f / snake.moveSpeed;
     m_moveTimer = 0.0f;
     m_directionQueue = {};
 
@@ -101,7 +102,7 @@ void GameState::HandleInput(InputAction input)
         return;
     }
 
-    Direction checkDirection { snake.g_currentDirection };
+    Direction checkDirection { snake.currentDirection };
     if (!m_directionQueue.empty())
     {
         // If there are queued inputs, check against the last one
