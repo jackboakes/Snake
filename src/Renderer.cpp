@@ -164,63 +164,74 @@ void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Colo
 static void DrawCenteredTitle(const char* title, int y, int fontSize, Color color)
 {
     const float fontSpacing = (float)fontSize / 10.0f;
-    const int titleWidth = MeasureTextEx(GetFontDefault(), title, (float)fontSize, fontSpacing).x;
-    const int titlePosX = (GetScreenWidth() / 2) - (titleWidth / 2);
+    const int titleWidth = static_cast<int>(MeasureTextEx(GetFontDefault(), title, (float)fontSize, fontSpacing).x);
+    const int titlePosX = static_cast<int>((GetScreenWidth() / 2) - (titleWidth / 2));
 
     DrawTextWithShadow(title, titlePosX, y, fontSize, color);
 }
 
-static void RenderButton(const Button* button)
+static void RenderButton(const Button& button)
 {
-    const int borderWidth = 5;
-    const float fontSize = 25.0f;
-    const float fontSpacing = fontSize / 10.0f;
+    constexpr int borderWidth { 5 };
+    constexpr float fontSize { 25.0f };
+    constexpr float fontSpacing { fontSize / 10.0f };
 
-    const int textWidth = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).x;
-    const int textHeight = MeasureTextEx(GetFontDefault(), button->text, fontSize, fontSpacing).y;
-    const int textPosX = button->bounds.x + (button->bounds.width - textWidth) / 2;
-    const int textPosY = button->bounds.y + (button->bounds.height - textHeight) / 2;
+    const int textWidth { static_cast<int>(MeasureTextEx(GetFontDefault(), button.text, fontSize, fontSpacing).x) };
+    const int textHeight { static_cast<int>(MeasureTextEx(GetFontDefault(), button.text, fontSize, fontSpacing).y) };
+    const int textPosX { static_cast<int>(button.bounds.x + (button.bounds.width - textWidth) / 2) };
+    const int textPosY { static_cast<int>(button.bounds.y + (button.bounds.height - textHeight) / 2) };
 
-    Color buttonColour;
-    Color textColour = WHITE;
+    Color buttonColour { BUTTON_FACE_DEFAULT };
+    Color textColour { WHITE };
 
+    // determines border and text styling
+    bool drawPressed { false };
 
-    if (button->isHovered)
+    switch (button.GetState())
     {
+    case Button::State::HOVERED:
         buttonColour = BUTTON_FACE_HOVER;
-    }
-    else
-    {
+        break;
+    case Button::State::PRESSED:
+        buttonColour = BUTTON_FACE_HOVER;
+        drawPressed = true;
+        break;
+    case Button::State::RELEASED:
+        buttonColour = BUTTON_FACE_HOVER;
+        break;
+    case Button::State::DEFAULT:
         buttonColour = BUTTON_FACE_DEFAULT;
+        break;
     }
 
-    DrawRectangleRec(button->bounds, buttonColour);
+    DrawRectangleRec(button.bounds, buttonColour);
 
-    if (button->isPressed)
+    if (drawPressed)
     {
         // Invert the light source, remove shadow and move text for a pressed in look
-        DrawBeveledBorder(button->bounds, borderWidth, BORDER_DARK, BORDER_LIGHT);
-        DrawText(button->text, textPosX + 2, textPosY + 2, fontSize, textColour);
+        DrawBeveledBorder(button.bounds, borderWidth, BORDER_DARK, BORDER_LIGHT);
+        DrawText(button.text, textPosX + 2, textPosY + 2, fontSize, textColour);
     }
     else
     {
         // Standard top left light source look with a shadow
-        DrawBeveledBorder(button->bounds, borderWidth, BORDER_LIGHT, BORDER_DARK);
-        DrawTextWithShadow(button->text, textPosX, textPosY, fontSize, textColour);
+        DrawBeveledBorder(button.bounds, borderWidth, BORDER_LIGHT, BORDER_DARK);
+        DrawTextWithShadow(button.text, textPosX, textPosY, fontSize, textColour);
 
     }
 }
 
-static void RenderAllButtons(const UI* ui)
+static void RenderAllButtons(const UI& ui)
 {
-    for (int i = 0; i < ui->buttonCount; i++)
+    const std::vector<Button>& buttons = ui.GetButtons();
+
+    for (const Button& button : buttons)
     {
-        RenderButton(&ui->buttons[i]);
+        RenderButton(button);
     }
 }
 
-
-void RenderMainMenu(const UI* ui)
+void RenderMainMenu(const UI& ui)
 {
     BeginDrawing();
     ClearBackground(backgroundColour);
@@ -229,7 +240,7 @@ void RenderMainMenu(const UI* ui)
     EndDrawing();
 }
 
-void RenderGameOver(const UI* ui, int score, int highScore)
+void RenderGameOver(const UI& ui, int score, int highScore)
 {
     const int scoreFontSize = 25;
     const int screenWidth = GetScreenWidth();

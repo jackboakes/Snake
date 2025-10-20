@@ -2,7 +2,7 @@
 #define RENDERER_H
 
 #include "Game.h"
-#include "Ui.h"
+#include "UI.h"
 
 // Menu global constants
 #define TITLE_FONT_SIZE 40
@@ -19,8 +19,8 @@ void DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColo
 void DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Color colour);
 
 // ui functions
-void RenderMainMenu(const UI* ui);
-void RenderGameOver(const UI* ui, int score, int highScore);
+void RenderMainMenu(const UI& ui);
+void RenderGameOver(const UI& ui, int score, int highScore);
 
 
 

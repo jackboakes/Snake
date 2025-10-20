@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "Input.h"
 #include "GameData.h"
 #include "Score.h"
@@ -8,7 +7,6 @@
 #include "Audio.h"
 #include "raylib.h"
 #include <vector>
-
 
 
 struct Food
