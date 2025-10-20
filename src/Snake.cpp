@@ -19,17 +19,17 @@ GridPosition Snake::DirectionToGridOffset(Direction dir)
 {
     switch (dir)
     {
-    case DIR_NORTH: return { 0, -1 };
-    case DIR_SOUTH: return { 0, 1 };
-    case DIR_EAST:  return { 1, 0 };
-    case DIR_WEST:  return { -1, 0 };
+    case Direction::NORTH: return { 0, -1 };
+    case Direction::SOUTH: return { 0, 1 };
+    case Direction::EAST:  return { 1, 0 };
+    case Direction::WEST:  return { -1, 0 };
     default:        return { 0, 0 };
     }
 }
 
 void Snake::Update(Direction nextDirection)
 {
-    if (nextDirection != DIR_NONE)
+    if (nextDirection != Direction::NONE)
     {
         g_currentDirection = nextDirection;
     }

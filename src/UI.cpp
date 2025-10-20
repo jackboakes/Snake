@@ -17,7 +17,6 @@ Button::State Button::GetState() const
     return m_state;
 }
 
-
 UI::UI() = default;
 
 void UI::Update( Audio& audio)

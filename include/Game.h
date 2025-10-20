@@ -7,7 +7,7 @@
 #include "Audio.h"
 #include "raylib.h"
 #include <vector>
-
+#include <queue>
 
 struct Food
 {
@@ -24,7 +24,7 @@ public:
     bool isGameOver { false };
 
 private:
-    DirectionQueue m_directionQueue;
+    std::queue<Direction> m_directionQueue;
     float m_moveTimer { 0.0f };
     float m_moveInterval;
     Score m_score;
@@ -35,7 +35,6 @@ public:
     void HandleInput(InputAction input);
     void UpdateGame(float deltaTime, Audio& audio);
 private:
-
     bool IsOppositeDirection(Direction dir1, Direction dir2);
 
     bool CheckWallCollision(const Snake& snake);

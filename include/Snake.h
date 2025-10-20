@@ -7,7 +7,7 @@ class Snake
 {
 public:
     std::vector<GridPosition> g_bodyPart;
-    Direction g_currentDirection { DIR_EAST };
+    Direction g_currentDirection { Direction::EAST };
     float g_moveSpeed { 10.0f };
 private:
 

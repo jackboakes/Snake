@@ -3,10 +3,10 @@
 
 bool GameState::IsOppositeDirection(Direction dir1, Direction dir2)
 {
-    return (dir1 == DIR_NORTH && dir2 == DIR_SOUTH) ||
-        (dir1 == DIR_SOUTH && dir2 == DIR_NORTH) ||
-        (dir1 == DIR_WEST && dir2 == DIR_EAST) ||
-        (dir1 == DIR_EAST && dir2 == DIR_WEST);
+    return (dir1 == Direction::NORTH && dir2 == Direction::SOUTH) ||
+        (dir1 == Direction::SOUTH && dir2 == Direction::NORTH) ||
+        (dir1 == Direction::WEST && dir2 == Direction::EAST) ||
+        (dir1 == Direction::EAST && dir2 == Direction::WEST);
 }
 
 bool GameState::CheckWallCollision(const Snake& snake)
@@ -111,39 +111,52 @@ void GameState::Reset()
 
     m_moveInterval = 1.0f / snake.g_moveSpeed;
     m_moveTimer = 0.0f;
-    InitDirectionQueue(&m_directionQueue);
+    m_directionQueue = {};
 
     UpdateFood();
 }
 
 void GameState::HandleInput(InputAction input)
 {
-    Direction newDirection = DIR_NONE;
+    Direction newDirection { Direction::NONE };
 
     switch (input)
     {
-    case INPUT_UP: newDirection = DIR_NORTH; break;
-    case INPUT_LEFT: newDirection = DIR_WEST; break;
-    case INPUT_DOWN: newDirection = DIR_SOUTH; break;
-    case INPUT_RIGHT: newDirection = DIR_EAST; break;
-    case INPUT_NONE: return;
+    case InputAction::UP: 
+        newDirection = Direction::NORTH; 
+        break;
+    case InputAction::LEFT: 
+        newDirection = Direction::WEST; 
+        break;
+    case InputAction::DOWN: 
+        newDirection = Direction::SOUTH; 
+        break;
+    case InputAction::RIGHT: 
+        newDirection = Direction::EAST; 
+        break;
+    case InputAction::NONE: 
+        return;
     }
 
-    Direction checkDirection = snake.g_currentDirection;
-    if (!DirectionQueueEmpty(&m_directionQueue))
+    Direction checkDirection { snake.g_currentDirection };
+    if (!m_directionQueue.empty())
     {
         // If there are queued inputs, check against the last one
-        int lastIndex = (m_directionQueue.tail - 1 + INPUT_QUEUE_SIZE) % INPUT_QUEUE_SIZE;
-        checkDirection = m_directionQueue.dirValues[lastIndex];
+        checkDirection = m_directionQueue.back();
     }
 
     // Only queue the input if it's not opposite to the current/queued direction
     if (!IsOppositeDirection(newDirection, checkDirection))
     {
-        EnqueueDirection(&m_directionQueue, newDirection);
+        // pop if we are max size 
+        if (m_directionQueue.size() == INPUT_QUEUE_SIZE)
+        {
+            m_directionQueue.pop();
+
+        }
+        m_directionQueue.push(newDirection);
     }
 }
-
 
 void GameState::UpdateGame(float deltaTime, Audio& audio)
 {
@@ -160,7 +173,12 @@ void GameState::UpdateGame(float deltaTime, Audio& audio)
         m_moveTimer -= m_moveInterval;
 
         // Get the next direction from the queue managed by GameState
-        Direction nextDirection = DequeueDirection(&m_directionQueue);
+        Direction nextDirection { Direction::NONE };
+        if (!m_directionQueue.empty())
+        {
+            nextDirection = m_directionQueue.front(); 
+            m_directionQueue.pop();
+        }
 
         // Inject the direction into the snake. The snake will update itself.
         snake.Update(nextDirection);

@@ -66,10 +66,10 @@ static Rectangle GetHeadSpriteRect(Direction direction)
 {
     switch (direction)
     {
-    case DIR_NORTH: return Assets::GetSpriteRect(0,0, TILE_SIZE);  // head facing up
-    case DIR_WEST:  return Assets::GetSpriteRect(1, 0, TILE_SIZE);  // head facing left
-    case DIR_SOUTH: return Assets::GetSpriteRect(2, 0, TILE_SIZE);  // head facing down
-    case DIR_EAST:  return Assets::GetSpriteRect(3, 0, TILE_SIZE);  // head facing right
+    case Direction::NORTH: return Assets::GetSpriteRect(0,0, TILE_SIZE);  // head facing up
+    case Direction::WEST:  return Assets::GetSpriteRect(1, 0, TILE_SIZE);  // head facing left
+    case Direction::SOUTH: return Assets::GetSpriteRect(2, 0, TILE_SIZE);  // head facing down
+    case Direction::EAST:  return Assets::GetSpriteRect(3, 0, TILE_SIZE);  // head facing right
     default:        return Assets::GetSpriteRect(0, 0, TILE_SIZE);  // default
     }
 }
