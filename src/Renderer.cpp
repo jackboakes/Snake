@@ -69,14 +69,14 @@ void Renderer::DrawSnake(const Snake& snake)
     Texture2D snakeAtlas { Assets::GetSnakeAtlas() };
     for (int i { 1 }; i < snake.bodyPart.size(); i++)
     {
-        int pixelX { GAME_OFFSET + (snake.bodyPart[i].x * TILE_SIZE) };
-        int pixelY { GAME_OFFSET + (snake.bodyPart[i].y * TILE_SIZE) };
+        const int pixelX { GAME_OFFSET + (snake.bodyPart[i].x * TILE_SIZE) };
+        const int pixelY { GAME_OFFSET + (snake.bodyPart[i].y * TILE_SIZE) };
 
         DrawRectangle(pixelX, pixelY, TILE_SIZE, TILE_SIZE, SNAKE_COLOUR);
     }
 
-    int headX { GAME_OFFSET + (snake.bodyPart[0].x * TILE_SIZE) };
-    int headY { GAME_OFFSET + (snake.bodyPart[0].y * TILE_SIZE) };
+    const float headX { static_cast<float>(GAME_OFFSET + (snake.bodyPart[0].x * TILE_SIZE)) };
+    const float headY { static_cast<float>(GAME_OFFSET + (snake.bodyPart[0].y * TILE_SIZE)) };
 
     if (snakeAtlas.id > 0)
     {
@@ -84,7 +84,7 @@ void Renderer::DrawSnake(const Snake& snake)
         Rectangle sourceRect { GetHeadSpriteRect(snake.currentDirection) };
 
         // Destination rectangle (where to draw on screen)
-        Rectangle destRect { (float)headX, (float)headY, (float)TILE_SIZE, (float)TILE_SIZE };
+        Rectangle destRect { headX, headY, TILE_SIZE, TILE_SIZE };
 
         // Draw the sprite (no rotation needed since we have pre-rotated sprites)
         DrawTexturePro(snakeAtlas, sourceRect, destRect, { 0, 0 }, 0.0f, WHITE);
@@ -92,21 +92,22 @@ void Renderer::DrawSnake(const Snake& snake)
     else
     {
         // Fallback to rounded rectangle if texture isn't loaded
-        Rectangle headPos { (float)headX, (float)headY, (float)TILE_SIZE, (float)TILE_SIZE };
+        Rectangle headPos { headX, headY, TILE_SIZE, TILE_SIZE };
         DrawRectangleRounded(headPos, 0.5, 6, SNAKE_COLOUR);
     }
 }
 
 void Renderer::DrawFood(const Food& food)
 {
-    int pixelX { GAME_OFFSET + (food.position.x * TILE_SIZE) };
-    int pixelY { GAME_OFFSET + (food.position.y * TILE_SIZE) };
+    constexpr float fTileSize { static_cast<float>(TILE_SIZE) };
+    const int pixelX { GAME_OFFSET + (food.position.x * TILE_SIZE) };
+    const int pixelY { GAME_OFFSET + (food.position.y * TILE_SIZE) };
     Texture2D snakeAtlas { Assets::GetSnakeAtlas() };
 
     if (snakeAtlas.id > 0)
     {
-        Rectangle foodRect { Assets::GetSpriteRect(0, 2, static_cast<float>(TILE_SIZE)) };
-        Rectangle destRect { (float)pixelX, (float)pixelY, (float)TILE_SIZE, (float)TILE_SIZE };
+        Rectangle foodRect { Assets::GetSpriteRect(0, 2, fTileSize) };
+        Rectangle destRect { static_cast<float>(pixelX), static_cast<float>(pixelY), fTileSize, fTileSize };
         DrawTexturePro(snakeAtlas, foodRect, destRect, { 0, 0 }, 0.0f, WHITE);
     }
     else
@@ -117,8 +118,9 @@ void Renderer::DrawFood(const Food& food)
 
 void Renderer::DrawCenteredTitle(const char* title, int y, int fontSize, Color color)
 {
-    const float fontSpacing { (float)fontSize / 10.0f };
-    const int titleWidth { static_cast<int>(MeasureTextEx(GetFontDefault(), title, (float)fontSize, fontSpacing).x) };
+    const float fFontSize { static_cast<float>(fontSize) };
+    const float fontSpacing { fFontSize / 10.0f };
+    const int titleWidth { static_cast<int>(MeasureTextEx(GetFontDefault(), title, fFontSize, fontSpacing).x) };
     const int titlePosX { static_cast<int>((GetScreenWidth() / 2) - (titleWidth / 2)) };
 
     Renderer::DrawTextWithShadow(title, titlePosX, y, fontSize, color);
@@ -177,7 +179,7 @@ void Renderer::RenderButton(const Button & button)
 
 void Renderer::RenderAllButtons(const UI & ui)
 {
-    const std::vector<Button>& buttons = ui.GetButtons();
+    const std::vector<Button>& buttons { ui.GetButtons() };
 
     for (const Button& button : buttons)
     {
@@ -232,10 +234,12 @@ void Renderer::GameOver(const UI& ui, int score, int highScore)
 // with a light colour in the top and left border, and darker in the bottom and right
 void Renderer::DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color lightColour, Color darkColour)
 {
-    Rectangle top { borderRec.x, borderRec.y, borderRec.width, (float)borderThickness };
-    Rectangle bottom { borderRec.x, borderRec.y + borderRec.height - (float)borderThickness, borderRec.width, (float)borderThickness };
-    Rectangle left { borderRec.x, borderRec.y + (float)borderThickness, (float)borderThickness, borderRec.height - (2 * (float)borderThickness) };
-    Rectangle right { borderRec.x + borderRec.width - (float)borderThickness, borderRec.y + (float)borderThickness, (float)borderThickness, borderRec.height - (2 * (float)borderThickness) };
+    const float fBorderThickness { static_cast<float>(borderThickness) };
+
+    Rectangle top { borderRec.x, borderRec.y, borderRec.width, fBorderThickness };
+    Rectangle bottom { borderRec.x, borderRec.y + borderRec.height - fBorderThickness, borderRec.width, fBorderThickness };
+    Rectangle left { borderRec.x, borderRec.y + fBorderThickness, fBorderThickness, borderRec.height - (2 * fBorderThickness) };
+    Rectangle right { borderRec.x + borderRec.width - fBorderThickness, borderRec.y + fBorderThickness, fBorderThickness, borderRec.height - (2 * fBorderThickness) };
 
     DrawRectangleRec(top, lightColour);
     DrawRectangleRec(bottom, darkColour);
@@ -245,7 +249,7 @@ void Renderer::DrawBeveledBorder(Rectangle borderRec, int borderThickness, Color
 
 void Renderer::DrawTextWithShadow(const char* text, int posX, int posY, int fontSize, Color colour)
 {
-    Color const shadowColor = { 0, 0, 0, 128 }; // black with half alpha
+    Color const shadowColor { 0, 0, 0, 128 }; // black with half alpha
 
     DrawText(text, posX + 2, posY + 2, fontSize, shadowColor);
     DrawText(text, posX, posY, fontSize, colour);
