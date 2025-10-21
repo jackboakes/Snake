@@ -35,7 +35,6 @@ private:
     bool CheckWallCollision(const Snake& snake);
     bool CheckSelfCollision(const Snake& snake);
 
-    // TODO: Move this to a Food class?
     void HandleFoodEat(Audio& audio);
 
     void HandleGameOver(Audio& audio);
