@@ -10,7 +10,7 @@ Snake::Snake()
     constexpr int leftX { startLength + 1 };
     constexpr int halfY { GRID_SIZE / 2 };
 
-    for (int i = 0; i < startLength; i++)
+    for (int i { 0 }; i < startLength; i++)
     {
         bodyPart.push_back({ leftX - i, halfY });
     }
@@ -36,13 +36,13 @@ void Snake::Update(Direction nextDirection)
     }
 
     // move snake body by shifting each segment to next position
-    for (std::size_t i = bodyPart.size() - 1; i > 0; i--)
+    for (std::size_t i { bodyPart.size() - 1 }; i > 0; i--)
     {
         bodyPart[i] = bodyPart[i - 1];
     }
 
     // update head in current direction 
-    GridPosition dirOnGrid = DirectionToGridOffset(currentDirection);
+    GridPosition dirOnGrid { DirectionToGridOffset(currentDirection) };
     bodyPart[0].x += dirOnGrid.x;
     bodyPart[0].y += dirOnGrid.y;
 }

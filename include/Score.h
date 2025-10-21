@@ -5,9 +5,9 @@ class Score
 public:
 	int LoadHighScore();
 	bool SaveHighScore(int score);
-	void CheckAndUpdateHighScore(int currentScore, int* highScore);
+	void CheckAndUpdateHighScore(int currentScore, int& highScore);
 private:
-	const char* m_File { "highscore.txt" };
+	const char* m_file { "highscore.txt" };
 };
 
 

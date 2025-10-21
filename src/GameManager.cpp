@@ -20,7 +20,7 @@ GameManager::GameManager()
     const int buttonHeight { 32 * 2 };
     const int buttonPadding { 20 };
 
-    Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
+    Rectangle buttonBounds { 0, 0, buttonWidth, buttonHeight };
 
     m_mainMenuUI.AddButton(MAIN_MENU_START, buttonBounds, "Start Game");
     m_mainMenuUI.AddButton(MAIN_MENU_QUIT, buttonBounds, "Quit");
@@ -56,10 +56,10 @@ void GameManager::UpdateMainMenu()
 
 void GameManager::UpdateGameplay()
 {
-    float deltaTime = GetFrameTime();
+    float deltaTime { GetFrameTime() };
 
     // Input
-    InputAction input = ReadGameInput();
+    InputAction input { ReadGameInput() };
     m_gameState.HandleInput(input);
 
     // Update
@@ -116,7 +116,7 @@ void GameManager::SetGameManagerState(State newState)
         const int screenWidth { GetScreenWidth() };
         const int screenHeight { GetScreenHeight() };
 
-        Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
+        Rectangle buttonBounds { 0, 0, buttonWidth, buttonHeight };
 
         m_mainMenuUI.AddButton(MAIN_MENU_START, buttonBounds, "Start Game");
         m_mainMenuUI.AddButton(MAIN_MENU_QUIT, buttonBounds, "Quit");
@@ -135,7 +135,7 @@ void GameManager::SetGameManagerState(State newState)
         const int buttonPadding { 20 };
         const int screenWidth { GetScreenWidth() };
         const int screenHeight { GetScreenHeight() };
-        Rectangle buttonBounds = { 0, 0, buttonWidth, buttonHeight };
+        Rectangle buttonBounds { 0, 0, buttonWidth, buttonHeight };
 
         m_gameOverUI.AddButton(GAME_OVER_MAIN_MENU, buttonBounds, "Main Menu");
         m_gameOverUI.AddButton(GAME_OVER_RESTART, buttonBounds, "Restart");

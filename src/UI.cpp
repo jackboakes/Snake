@@ -99,19 +99,19 @@ void UI::CentreButtonsVertically(int screenWidth, int screenHeight, int buttonWi
     {
         return;
     }
-
-    const int totalButtonsHeight = (m_buttons.size() * buttonHeight) +
-        ((m_buttons.size() - 1) * padding);
-    const int startY = (screenHeight / 2) - (totalButtonsHeight / 2);
+    // button height + padding
+    const int totalButtonsHeight { static_cast<int>((m_buttons.size() * buttonHeight) +
+        ((m_buttons.size() - 1) * padding)) };
+    const float startY { static_cast<float>((screenHeight / 2) - (totalButtonsHeight / 2)) };
 
     // update new button positions
     for (int i = 0; i < m_buttons.size(); i++)
     {
         m_buttons[i].bounds = {
             (screenWidth / 2.0f) - (buttonWidth / 2.0f),
-            (float) startY + (i * (buttonHeight + padding)),
-            (float) buttonWidth,
-            (float) buttonHeight
+            startY + (i * (buttonHeight + padding)),
+            static_cast<float>(buttonWidth),
+            static_cast<float>(buttonHeight)
         };
     }
 }
