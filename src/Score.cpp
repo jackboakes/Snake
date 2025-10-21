@@ -1,19 +1,19 @@
 #include "raylib.h"
 #include "Score.h"
-
+#include <fstream>
+#include <filesystem>
+#include <string>
 
 int Score::LoadHighScore()
 {
     int highScore = 0;
 
-    if (FileExists(m_File))
+    if (std::filesystem::exists(m_file))
     {
-        char* fileText = LoadFileText(m_File);
-
-        if (fileText != NULL)
+        std::ifstream inFile { m_file };
+        if (inFile)
         {
-            highScore = TextToInteger(fileText); 
-            UnloadFileText(fileText);
+            inFile >> highScore;
         }
     }
     else
@@ -27,10 +27,15 @@ int Score::LoadHighScore()
 
 bool Score::SaveHighScore(int score)
 {
-    char scoreText[32];
-    TextCopy(scoreText, TextFormat("%d", score));
+    std::ofstream outFile(m_file);
 
-    return SaveFileText(m_File, scoreText);
+    if (outFile)
+    {
+        outFile << score;
+        return true;
+    }
+
+    return false;
 }
 
 void Score::CheckAndUpdateHighScore(int currentScore, int& highScore)
