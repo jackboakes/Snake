@@ -67,7 +67,7 @@ void UI::AddButton(int id, Rectangle bounds, const char* text)
     m_buttons.push_back(newButton);
 }
 
-std::vector<Button> UI::GetButtons() const
+const std::vector<Button>& UI::GetButtons() const
 {
     return m_buttons;
 }
@@ -82,7 +82,7 @@ bool UI::WasActiveButtonReleased(int buttonID)
         return false;
     }
 
-    if (buttonID < 0 && buttonID > m_buttons.size())
+    if (buttonID < 0 || buttonID > m_buttons.size())
     {
         return false;
     }
@@ -103,9 +103,9 @@ void UI::CentreButtonsVertically(int screenWidth, int screenHeight, int buttonWi
     const int totalButtonsHeight { static_cast<int>((m_buttons.size() * buttonHeight) +
         ((m_buttons.size() - 1) * padding)) };
     const float startY { static_cast<float>((screenHeight / 2) - (totalButtonsHeight / 2)) };
-
+    
     // update new button positions
-    for (int i = 0; i < m_buttons.size(); i++)
+    for (int i { 0 }; i < m_buttons.size(); i++)
     {
         m_buttons[i].bounds = {
             (screenWidth / 2.0f) - (buttonWidth / 2.0f),

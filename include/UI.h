@@ -46,7 +46,7 @@ public:
 
 	void Update(Audio& audio);
 	void AddButton(int id, Rectangle bounds, const char* text);
-	std::vector<Button> GetButtons() const;
+	const std::vector<Button>& GetButtons() const;
 	bool WasActiveButtonReleased(int buttonID);
 	void CentreButtonsVertically(int screenWidth, int screenHeight, int buttonWidth, int buttonHeight, int padding);
 
