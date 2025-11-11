@@ -1,4 +1,4 @@
-# <img width="32" height="32" alt="snake_logo" src="https://github.com/user-attachments/assets/29967f89-b8de-4582-a317-d8e71b1d36b4" />Snake Game <img width="32" height="32" alt="watermelon" src="https://github.com/user-attachments/assets/68420bae-6117-4959-bae1-ef09c6e266cb" />
+# <img width="32" height="32" alt="snake_logo" src="https://github.com/user-attachments/assets/29967f89-b8de-4582-a317-d8e71b1d36b4" /> Snake Game <img width="32" height="32" alt="watermelon" src="https://github.com/user-attachments/assets/68420bae-6117-4959-bae1-ef09c6e266cb" />
 
 
 
